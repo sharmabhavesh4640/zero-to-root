@@ -128,6 +128,8 @@
   .ch-full p{font-size:15px;color:var(--ink-soft);margin:0 0 12px;line-height:1.72;}
   .ch-full p strong,.ch-full li strong{color:var(--ink);}
   .ch-full em{color:var(--ink);font-style:italic;}
+  .ch-full a{color:var(--accent-2);text-decoration:underline;text-underline-offset:3px;}
+  .ch-full a:hover{color:var(--accent);}
   .ch-full ul{margin:0 0 12px;padding-left:20px;}
   .ch-full li{font-size:15px;color:var(--ink-soft);margin:6px 0;line-height:1.65;}
   .ch-full .box{border-radius:10px;padding:13px 16px;margin:16px 0;font-size:14.5px;}
@@ -365,8 +367,8 @@ const CHAPTERS_FULL = {
    <p>When you are authorized, you are authorized for <strong>exactly</strong> what is written down: these addresses, these apps, these methods. Touch one thing outside that "scope" and you are a criminal again, even in the middle of a real job. Professionals get authorization in <strong>writing</strong>, every time. A friend saying "yeah, go ahead" is not real authorization and will not protect you in court.</p>
    <h4>The law where you are</h4>
    <ul>
-     <li><strong>India — IT Act, 2000</strong> (especially Sections 43 and 66): unauthorized access, damage, or data theft can mean heavy fines and jail.</li>
-     <li>Almost every country has an equivalent (for example the CFAA in the USA). Unauthorized access is a crime nearly everywhere.</li>
+     <li><strong>India — <a href="https://en.wikipedia.org/wiki/Information_Technology_Act,_2000" target="_blank" rel="noopener">IT Act, 2000</a></strong> (especially Sections 43 and 66): unauthorized access, damage, or data theft can mean heavy fines and jail.</li>
+     <li>Almost every country has an equivalent (for example the <a href="https://en.wikipedia.org/wiki/Computer_Fraud_and_Abuse_Act" target="_blank" rel="noopener">CFAA</a> in the USA). Unauthorized access is a crime nearly everywhere.</li>
    </ul>
    <div class="box warn"><span class="h">⚠️ These are NOT defenses</span><p>"I was just testing." "I did not cause any harm." "I did not even use the data." None of these are legal defenses. The unauthorized access itself is the crime. Careers and freedom have ended over a single "harmless" test.</p></div>
    <h4>Where it is always safe to practice</h4>
@@ -395,13 +397,48 @@ const CHAPTERS_FULL = {
    <h3>1.7 — Train the mindset (do this daily)</h3>
    <p>The mindset is a muscle. Build it with a simple habit: for any system you use — an app, a website, an ATM — quietly ask yourself <strong>"what is this assuming about me, and what would happen if I broke that assumption?"</strong> You do not act on it (that would be illegal) — you just <em>notice</em>. Do this daily and within weeks you will start seeing the world the way an attacker does.</p>
 
+   <h3>1.8 — Your practice ground (start here)</h3>
+   <p>You cannot learn to swim from a book. These are free, legal places to actually practice — go in this order:</p>
+   <ul>
+     <li><a href="https://overthewire.org/wargames/bandit/" target="_blank" rel="noopener"><strong>OverTheWire: Bandit</strong></a> — the classic first wargame; teaches Linux and the command line by making you earn each level's password. <em>Start here.</em></li>
+     <li><a href="https://tryhackme.com" target="_blank" rel="noopener"><strong>TryHackMe</strong></a> — guided, beginner-friendly rooms that walk you through real attacks step by step.</li>
+     <li><a href="https://picoctf.org" target="_blank" rel="noopener"><strong>picoCTF</strong></a> — free beginner CTF challenges from Carnegie Mellon University.</li>
+     <li><a href="https://www.hackthebox.com" target="_blank" rel="noopener"><strong>Hack The Box</strong></a> — real vulnerable machines to break into; step up here once the basics feel comfortable.</li>
+     <li><a href="https://portswigger.net/web-security" target="_blank" rel="noopener"><strong>PortSwigger Web Security Academy</strong></a> — the best free web-hacking training anywhere, with hands-on labs (you will use this heavily in Part 3).</li>
+   </ul>
+   <div class="box key"><span class="h">💡 Rule</span><p>Only ever practice on these platforms, your own lab, or targets you have written permission to test. That is exactly why they exist.</p></div>
+
+   <h3>1.9 — Free resources to learn from</h3>
+   <ul>
+     <li><a href="https://owasp.org" target="_blank" rel="noopener"><strong>OWASP</strong></a> — the open standard for web security; its Top 10 and Testing Guide are essential and free.</li>
+     <li><strong>YouTube:</strong> <a href="https://www.youtube.com/@_JohnHammond" target="_blank" rel="noopener">John Hammond</a>, <a href="https://www.youtube.com/@NetworkChuck" target="_blank" rel="noopener">NetworkChuck</a>, <a href="https://www.youtube.com/@LiveOverflow" target="_blank" rel="noopener">LiveOverflow</a> — free, high quality, beginner to advanced.</li>
+     <li><strong>Books (when you are ready):</strong> <em>Penetration Testing</em> by Georgia Weidman (a great first book), <em>The Web Application Hacker's Handbook</em>, and <em>Hacking: The Art of Exploitation</em>.</li>
+   </ul>
+
+   <h3>1.10 — Communities (do not learn alone)</h3>
+   <p>Every strong hacker grew inside a community. Lurk, read, ask, and eventually help others:</p>
+   <ul>
+     <li>Reddit: <a href="https://www.reddit.com/r/hacking/" target="_blank" rel="noopener">r/hacking</a> and <a href="https://www.reddit.com/r/netsec/" target="_blank" rel="noopener">r/netsec</a>.</li>
+     <li>The <strong>TryHackMe</strong> and <strong>Hack The Box</strong> Discord servers (linked from their websites) — active and beginner-friendly.</li>
+     <li><a href="https://ctftime.org" target="_blank" rel="noopener">CTFtime</a> — find CTF competitions and teams to join.</li>
+   </ul>
+
+   <h3>1.11 — Staying current &amp; legal references</h3>
+   <p>Security changes every week; read even 10 minutes a day:</p>
+   <ul>
+     <li>News: <a href="https://thehackernews.com" target="_blank" rel="noopener">The Hacker News</a>, <a href="https://krebsonsecurity.com" target="_blank" rel="noopener">Krebs on Security</a>, and <a href="https://portswigger.net/research" target="_blank" rel="noopener">PortSwigger Research</a>.</li>
+     <li>Law: <a href="https://en.wikipedia.org/wiki/Information_Technology_Act,_2000" target="_blank" rel="noopener">India IT Act, 2000</a>, and on responsible reporting, <a href="https://disclose.io" target="_blank" rel="noopener">disclose.io</a>.</li>
+   </ul>
+
    <div class="box check"><span class="h">✅ Check yourself</span><p>Before you tick this chapter done, make sure you can answer these in your own words:</p><p>1. In one sentence, what is hacking really about?<br>2. What is the single question that defines the hacker mindset?<br>3. What is the ONE thing that separates a legal pentester from a criminal?<br>4. Why is trust worth more than any certificate in this field?</p></div>
 
    <h3>🧪 Lab for Chapter 1</h3>
    <p><strong>1.</strong> Write your own one-paragraph "rules of engagement" — a personal promise about what you will and will not do. Keep it somewhere you will see it.</p>
-   <p><strong>2.</strong> Create a free account on <strong>TryHackMe</strong> or <strong>HackTheBox</strong> — your legal playground for the rest of this book.</p>
+   <p><strong>2.</strong> Create a free account on <a href="https://tryhackme.com" target="_blank" rel="noopener"><strong>TryHackMe</strong></a> and <a href="https://www.hackthebox.com" target="_blank" rel="noopener"><strong>Hack The Box</strong></a> — your legal playground for the rest of this book.</p>
    <p><strong>3.</strong> Mindset drill: pick one app you used today and write down three assumptions it makes about its users.</p>
-   <p>Done all three, and can answer the "Check yourself" questions? Tick the box on this chapter and move on to Chapter 2. 🚀</p>
+   <p><strong>4.</strong> Bookmark this book and the practice sites above.</p>
+   <div class="box story"><span class="h">🗓️ Your first week (suggested)</span><p><strong>Day 1-2:</strong> finish this chapter and create your accounts. <strong>Day 3-5:</strong> start <a href="https://overthewire.org/wargames/bandit/" target="_blank" rel="noopener">OverTheWire Bandit</a> (you have already begun this!). <strong>Day 6-7:</strong> one beginner TryHackMe room. Keep it small and daily — consistency beats cramming.</p></div>
+   <p>Done the labs, and can answer the "Check yourself" questions? Tick the box on this chapter and move on to Chapter 2. 🚀</p>
  `,
 };
 
