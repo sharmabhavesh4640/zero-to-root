@@ -1,0 +1,221 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Zero to Root — Exams</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --bg:#0a0e14; --surface:#111823; --surface-2:#18212e; --line:#212c3a;
+    --ink:#e7eef6; --ink-soft:#9fb0c0; --ink-faint:#61707f;
+    --accent:#57b6ff; --accent-2:#7cc7ff; --accent-wash:#0f2438;
+    --green:#5fd08a; --green-wash:#0f2c1d; --danger:#f2857a; --danger-wash:#2e1512;
+    --amber:#e9b45a;
+    --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+    --sans:'IBM Plex Sans',system-ui,sans-serif;
+    --display:'Sora','IBM Plex Sans',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;-webkit-font-smoothing:antialiased;}
+  .wrap{max-width:820px;margin:0 auto;padding:clamp(22px,4vw,50px) clamp(16px,4vw,36px) 80px;}
+  a{color:var(--accent-2);}
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:var(--accent);margin:0 0 10px;}
+  h1{font-family:var(--display);font-weight:800;letter-spacing:-.02em;font-size:clamp(30px,6vw,46px);margin:0 0 8px;}
+  h1 span{color:var(--accent);}
+  .sub{color:var(--ink-soft);margin:0 0 6px;font-size:15px;}
+  .back{font-family:var(--mono);font-size:12.5px;}
+  .panel{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin:18px 0;}
+  .panel h3{font-family:var(--display);font-size:15px;margin:0 0 8px;}
+  .panel p{margin:0;font-size:13.5px;color:var(--ink-soft);}
+
+  h2.ch{font-family:var(--display);font-weight:700;font-size:22px;margin:30px 0 4px;border-top:2px solid var(--accent);padding-top:14px;}
+  .ch-note{color:var(--ink-faint);font-size:13px;margin:0 0 16px;font-family:var(--mono);}
+
+  .q{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 18px;margin-bottom:12px;}
+  .q .qn{font-family:var(--mono);font-size:11.5px;color:var(--accent);letter-spacing:.1em;}
+  .q .qt{font-weight:600;margin:4px 0 12px;font-size:15.5px;}
+  .opt{display:flex;gap:10px;align-items:flex-start;padding:9px 11px;border:1px solid var(--line);border-radius:9px;
+    margin:6px 0;cursor:pointer;font-size:14.5px;color:var(--ink-soft);transition:.12s;}
+  .opt:hover{border-color:var(--accent);background:var(--surface-2);}
+  .opt input{margin-top:3px;flex:none;accent-color:var(--accent);}
+  .opt.correct{border-color:var(--green);background:var(--green-wash);color:var(--ink);}
+  .opt.wrong{border-color:var(--danger);background:var(--danger-wash);color:var(--ink);}
+  .expl{margin-top:10px;font-size:13.5px;color:var(--ink-soft);border-left:2px solid var(--accent);padding-left:12px;}
+  .expl[hidden]{display:none;}
+  .expl b{color:var(--accent-2);}
+
+  .actions{display:flex;gap:10px;flex-wrap:wrap;margin:18px 0;}
+  button{font-family:var(--display);font-weight:600;font-size:14px;border:none;border-radius:10px;padding:11px 20px;cursor:pointer;}
+  .btn-primary{background:var(--accent);color:#06121f;}
+  .btn-primary:hover{background:var(--accent-2);}
+  .btn-ghost{background:var(--surface-2);color:var(--ink);border:1px solid var(--line);}
+  .btn-ghost:hover{border-color:var(--accent);}
+
+  #result{border-radius:13px;padding:18px 20px;margin:16px 0;border:1px solid var(--line);background:var(--surface);}
+  #result[hidden]{display:none;}
+  #result .big{font-family:var(--display);font-weight:800;font-size:34px;}
+  #result.pass{border-color:var(--green);} #result.pass .big{color:var(--green);}
+  #result.fail{border-color:var(--amber);} #result.fail .big{color:var(--amber);}
+  #result .msg{color:var(--ink-soft);font-size:14.5px;margin-top:4px;}
+
+  .history{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:16px 18px;margin-top:24px;}
+  .history h3{font-family:var(--display);font-size:16px;margin:0 0 12px;display:flex;justify-content:space-between;align-items:center;}
+  .history table{width:100%;border-collapse:collapse;font-size:13.5px;}
+  .history th{text-align:left;color:var(--ink-faint);font-family:var(--mono);font-size:10.5px;letter-spacing:.1em;
+    text-transform:uppercase;padding:6px 8px;border-bottom:1px solid var(--line);}
+  .history td{padding:8px;border-bottom:1px solid var(--line);color:var(--ink-soft);font-variant-numeric:tabular-nums;}
+  .history td .pct{font-family:var(--mono);font-weight:600;}
+  .history td .pass{color:var(--green);} .history td .fail{color:var(--amber);}
+  .history .empty{color:var(--ink-faint);font-size:13.5px;}
+  .clearbtn{font-family:var(--mono);font-size:11px;background:none;border:1px solid var(--line);color:var(--ink-faint);
+    border-radius:7px;padding:5px 10px;cursor:pointer;}
+  .clearbtn:hover{border-color:var(--danger);color:var(--danger);}
+  footer{margin-top:40px;text-align:center;font-family:var(--mono);font-size:12px;color:var(--ink-faint);}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <p class="eyebrow">Zero to Root · Exams</p>
+  <h1><span>Test</span> Yourself</h1>
+  <p class="sub">Chapter-wise exams to prove you actually understood — not just read.</p>
+  <p class="back"><a href="index.html">← Back to the book</a></p>
+
+  <div class="panel">
+    <h3>How this works</h3>
+    <p>Pick the best answer for each question, then <b>Submit</b>. You need <b>70%+ to pass</b>. Your score is saved below (in this browser) so you can see your progress over attempts. To record a score permanently on GitHub, tell Claude your result and it will be added to <code>SCORES.md</code>.</p>
+  </div>
+
+  <h2 class="ch">Chapter 1 — Mindset, Ethics &amp; Law</h2>
+  <p class="ch-note">9 questions · pass mark 70%</p>
+
+  <form id="quiz"></form>
+
+  <div class="actions">
+    <button type="button" class="btn-primary" id="submit">Submit answers</button>
+    <button type="button" class="btn-ghost" id="retake" hidden>Retake</button>
+  </div>
+
+  <div id="result" hidden><div class="big"></div><div class="msg"></div></div>
+
+  <div class="history">
+    <h3>Your previous scores <button class="clearbtn" id="clear">clear</button></h3>
+    <div id="history-body"></div>
+  </div>
+
+  <footer>Zero to Root · Chapter 1 exam · more chapters' exams added as you reach them 🚀</footer>
+</div>
+
+<script>
+const QUESTIONS = [
+ {q:"At its core, what is hacking?",
+  o:["Typing fast on a black screen","Understanding a system deeply enough to make it do something it was never designed to do","Only using tools you downloaded","Breaking the law"],
+  a:1, e:"It's about deep understanding of a system — not tools, speed, or crime."},
+ {q:"Which single question best defines the hacker mindset?",
+  o:["Which tool should I use?","How fast can I type?","What did the designer assume — and what happens if that assumption is false?","Is this system popular?"],
+  a:2, e:"Every attack comes from breaking an assumption the designer made."},
+ {q:"A hacker who tests systems WITH permission to make them safer is a:",
+  o:["Black hat","White hat","Grey hat","Script kiddie"],
+  a:1, e:"White hat = ethical, authorized. That's the path you're on."},
+ {q:"In a security exercise, which team plays the ATTACKER role?",
+  o:["Blue team","Green team","Red team","Purple team"],
+  a:2, e:"Red = attack, Blue = defend, Purple = both together."},
+ {q:"What is the ONE thing that separates a legal pentester from a criminal?",
+  o:["The tools they use","Their skill level","Authorization (permission)","The operating system"],
+  a:2, e:"The same action is legal with permission and a crime without it. Permission is the line."},
+ {q:"You have written authorization to test a company. You may:",
+  o:["Test anything on their network","Only test exactly what's in the agreed scope","Test employees' personal phones too","Share any data you find publicly"],
+  a:1, e:"Scope is everything. Step outside it and you're a criminal again."},
+ {q:"In India, unauthorized access to a computer system is mainly covered by:",
+  o:["The IT Act, 2000","The Traffic Act","No law covers it","Only company policy"],
+  a:0, e:"IT Act, 2000 (Sections 43 & 66) — real fines and jail."},
+ {q:"Which is a SAFE, legal place to practice hacking?",
+  o:["A random website you found","Your neighbour's Wi-Fi","OverTheWire / TryHackMe / Hack The Box","A government portal"],
+  a:2, e:"These platforms exist specifically for legal practice."},
+ {q:"Why is trust so important in this field?",
+  o:["It isn't important","Hackers get access to sensitive systems; one betrayal ends the career","It makes hacking faster","Certificates require it"],
+  a:1, e:"Trust is the real currency — worth more than any certificate."},
+];
+
+const PASS = 70;
+const form = document.getElementById('quiz');
+QUESTIONS.forEach((item, i)=>{
+  const div = document.createElement('div');
+  div.className='q'; div.id='q'+i;
+  div.innerHTML = '<div class="qn">QUESTION '+(i+1)+'</div><div class="qt">'+item.q+'</div>'+
+    item.o.map((opt,j)=>'<label class="opt" id="q'+i+'o'+j+'"><input type="radio" name="q'+i+'" value="'+j+'"><span>'+opt+'</span></label>').join('')+
+    '<div class="expl" id="e'+i+'" hidden></div>';
+  form.appendChild(div);
+});
+
+const KEY='z2r.exam.ch1.history';
+function loadHistory(){ try{return JSON.parse(localStorage.getItem(KEY))||[];}catch(e){return [];} }
+function renderHistory(){
+  const h = loadHistory();
+  const body = document.getElementById('history-body');
+  if(!h.length){ body.innerHTML='<p class="empty">No attempts yet. Take the exam above!</p>'; return; }
+  let best = Math.max.apply(null, h.map(x=>x.percent));
+  let rows = h.slice().reverse().map(x=>{
+    const cls = x.percent>=PASS?'pass':'fail';
+    return '<tr><td>'+x.date+'</td><td>'+x.correct+' / '+x.total+'</td><td><span class="pct '+cls+'">'+x.percent+'%</span></td><td class="'+cls+'">'+(x.percent>=PASS?'PASS':'try again')+'</td></tr>';
+  }).join('');
+  body.innerHTML='<p style="margin:0 0 10px;font-size:13px;color:var(--ink-faint)">Best: <b style="color:var(--green)">'+best+'%</b> · '+h.length+' attempt(s)</p>'+
+    '<table><tr><th>When</th><th>Score</th><th>%</th><th>Result</th></tr>'+rows+'</table>';
+}
+renderHistory();
+
+document.getElementById('submit').addEventListener('click', ()=>{
+  let correct=0, unanswered=0;
+  QUESTIONS.forEach((item,i)=>{
+    const sel = form.querySelector('input[name="q'+i+'"]:checked');
+    QUESTIONS[i].o.forEach((_,j)=>{
+      const el=document.getElementById('q'+i+'o'+j); el.classList.remove('correct','wrong');
+    });
+    const ex=document.getElementById('e'+i);
+    document.getElementById('q'+i+'o'+item.a).classList.add('correct');
+    if(sel){
+      const val=parseInt(sel.value,10);
+      if(val===item.a) correct++; else document.getElementById('q'+i+'o'+val).classList.add('wrong');
+    } else { unanswered++; }
+    ex.innerHTML='<b>Answer:</b> '+item.o[item.a]+' — '+item.e; ex.hidden=false;
+  });
+  const total=QUESTIONS.length;
+  const percent=Math.round(correct/total*100);
+  const pass=percent>=PASS;
+  const r=document.getElementById('result');
+  r.hidden=false; r.className=pass?'pass':'fail';
+  r.querySelector('.big').textContent=correct+' / '+total+'  ('+percent+'%)';
+  r.querySelector('.msg').textContent = pass
+    ? (unanswered? 'Passed! (You left '+unanswered+' blank — review those.)' : 'Passed! You understood Chapter 1. Tick it in the book and move on. 🎉')
+    : 'Below 70%. Re-read the chapter and the explanations above, then retake. No rush.';
+  // save
+  const h=loadHistory();
+  const d=new Date();
+  const date=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')+' '+String(d.getHours()).padStart(2,'0')+':'+String(d.getMinutes()).padStart(2,'0');
+  h.push({date:date, correct:correct, total:total, percent:percent});
+  try{localStorage.setItem(KEY, JSON.stringify(h));}catch(e){}
+  renderHistory();
+  document.getElementById('retake').hidden=false;
+  r.scrollIntoView({behavior:'smooth', block:'center'});
+});
+
+document.getElementById('retake').addEventListener('click', ()=>{
+  QUESTIONS.forEach((item,i)=>{
+    const c=form.querySelector('input[name="q'+i+'"]:checked'); if(c)c.checked=false;
+    item.o.forEach((_,j)=>document.getElementById('q'+i+'o'+j).classList.remove('correct','wrong'));
+    document.getElementById('e'+i).hidden=true;
+  });
+  document.getElementById('result').hidden=true;
+  document.getElementById('retake').hidden=true;
+  window.scrollTo({top:0,behavior:'smooth'});
+});
+
+document.getElementById('clear').addEventListener('click', ()=>{
+  try{localStorage.removeItem(KEY);}catch(e){}
+  renderHistory();
+});
+</script>
+</body>
+</html>
