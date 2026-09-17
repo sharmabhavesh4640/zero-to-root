@@ -1,0 +1,347 @@
+<title>Ethical Hacking Day 1</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;700;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --bg:#0d1512; --surface:#152420; --surface-2:#1b2b26; --chip:#10201b;
+    --ink:#e9f1ed; --ink-soft:#a9b8b2; --ink-faint:#77877f; --line:#28362f;
+    --accent:#33d6c0; --accent-deep:#6fe7d6; --accent-wash:#10312b;
+    --amber:#e8ad5c; --amber-wash:#2b2211;
+    --danger:#f08a7e; --danger-wash:#2e1614;
+    --green:#54d47f; --green-wash:#12301f;
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+    --sans:'IBM Plex Sans',system-ui,sans-serif;
+    --display:'Chivo','IBM Plex Sans',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  body{background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.55;
+    -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:940px;margin:0 auto;padding:clamp(22px,4vw,54px) clamp(16px,4vw,38px) 70px;}
+  code{font-family:var(--mono);}
+
+  /* header */
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent-deep);display:flex;align-items:center;gap:10px;margin:0 0 16px;}
+  .eyebrow::before{content:"";width:30px;height:1px;background:var(--accent);}
+  h1{font-family:var(--display);font-weight:900;letter-spacing:-.02em;text-wrap:balance;
+    font-size:clamp(30px,6.4vw,52px);line-height:1.02;margin:0 0 14px;}
+  h1 .hl{color:var(--accent-deep);}
+  .lede{font-size:clamp(15px,2.2vw,18px);color:var(--ink-soft);max-width:62ch;margin:0 0 26px;}
+  .statbar{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:8px;}
+  .stat{background:var(--surface);border:1px solid var(--line);border-radius:10px;
+    padding:8px 14px;font-size:13px;color:var(--ink-soft);}
+  .stat b{color:var(--accent-deep);font-family:var(--mono);}
+
+  /* section */
+  section{background:var(--surface);border:1px solid var(--line);border-radius:15px;
+    padding:20px 22px;margin-top:20px;}
+  section > h2{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.01em;
+    margin:0 0 3px;display:flex;align-items:center;gap:10px;}
+  section > h2 .n{font-family:var(--mono);font-size:12px;color:var(--accent-deep);
+    background:var(--accent-wash);border:1px solid var(--line);border-radius:7px;padding:3px 8px;}
+  section > .sub{font-size:13.5px;color:var(--ink-faint);margin:2px 0 16px;}
+
+  /* command rows */
+  .cmds{display:flex;flex-direction:column;}
+  .cmd{padding:13px 0;border-top:1px solid var(--line);}
+  .cmd:first-child{border-top:none;}
+  .cmd .line{font-family:var(--mono);font-size:14px;font-weight:600;color:var(--accent-deep);
+    background:var(--chip);border:1px solid var(--line);border-radius:8px;padding:7px 11px;
+    display:inline-block;margin-bottom:7px;word-break:break-word;}
+  .cmd .desc{font-size:14.5px;color:var(--ink);margin:0 0 5px;}
+  .cmd .desc .ff{color:var(--ink-faint);font-family:var(--mono);font-size:12px;}
+  .cmd .ex{font-family:var(--mono);font-size:12.5px;color:var(--ink-soft);}
+  .cmd .ex::before{content:"Example  ";color:var(--accent);font-weight:600;letter-spacing:.05em;}
+
+  /* states / callouts */
+  .states{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-top:4px;}
+  .st{border-radius:11px;padding:12px 14px;border:1px solid var(--line);background:var(--surface-2);}
+  .st .tag{font-family:var(--mono);font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;}
+  .st .tag::before{content:"";width:9px;height:9px;border-radius:50%;}
+  .st.o .tag{color:var(--green);} .st.o .tag::before{background:var(--green);}
+  .st.c .tag{color:var(--danger);} .st.c .tag::before{background:var(--danger);}
+  .st.f .tag{color:var(--amber);} .st.f .tag::before{background:var(--amber);}
+  .st p{margin:6px 0 0;font-size:13px;color:var(--ink-soft);}
+
+  .flow{display:flex;flex-direction:column;gap:2px;margin-top:2px;}
+  .fstep{display:flex;gap:12px;align-items:flex-start;padding:9px 0;}
+  .fstep .n{flex:none;width:26px;height:26px;border-radius:8px;background:var(--accent-wash);
+    color:var(--accent-deep);font-family:var(--mono);font-weight:600;font-size:13px;
+    display:flex;align-items:center;justify-content:center;}
+  .fstep .t{font-size:14px;color:var(--ink);padding-top:3px;}
+  .fstep .t code{background:var(--chip);border:1px solid var(--line);padding:1px 6px;border-radius:5px;font-size:12.5px;color:var(--accent-deep);}
+
+  .note{display:flex;gap:12px;border-radius:11px;padding:13px 15px;font-size:13.5px;margin-top:14px;color:var(--ink-soft);}
+  .note.tip{background:var(--amber-wash);border:1px solid #4a3a1a;}
+  .note.warn{background:var(--danger-wash);border:1px solid #4a231f;}
+  .note.ok{background:var(--green-wash);border:1px solid #1e4630;}
+  .note b{color:var(--ink);}
+  .note .ic{font-size:16px;flex:none;}
+
+  .table-mini{width:100%;border-collapse:collapse;margin-top:6px;font-size:13.5px;}
+  .table-mini td{padding:8px 10px;border-top:1px solid var(--line);vertical-align:top;}
+  .table-mini tr:first-child td{border-top:none;}
+  .table-mini td:first-child{font-family:var(--mono);color:var(--accent-deep);white-space:nowrap;font-size:12.5px;}
+  .table-mini td:last-child{color:var(--ink-soft);}
+
+  /* index grid */
+  .index{display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));gap:8px;}
+  .index .i{background:var(--surface-2);border:1px solid var(--line);border-radius:9px;padding:9px 11px;font-size:13px;color:var(--ink-soft);}
+  .index .i b{font-family:var(--mono);color:var(--accent-deep);font-size:12.5px;}
+
+  footer{margin-top:34px;text-align:center;font-size:12px;color:var(--ink-faint);font-family:var(--mono);letter-spacing:.03em;}
+
+  @media print{
+    @page{margin:11mm;}
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    .wrap{padding:0;max-width:100%;}
+    section{break-inside:avoid;}
+    .cmd,.st,.fstep,.note,.index .i{break-inside:avoid;}
+    h1{font-size:32px;}
+  }
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Bhavesh · Ethical Hacking · Day 1</p>
+  <h1>Day 1 — <span class="hl">Complete</span> Toolkit &amp; Notes</h1>
+  <p class="lede">Aaj jo kuch seekha — har tool, uska kaam, format aur example — sab ek jagah. Jab bhi kuch bhoolo, ye khol lo. Easy Hinglish, koi complexity nahi. 🌙</p>
+  <div class="statbar">
+    <span class="stat"><b>25+</b> tools</span>
+    <span class="stat"><b>12</b> Bandit levels</span>
+    <span class="stat"><b>1</b> din 🔥</span>
+  </div>
+
+  <!-- 1 SETUP -->
+  <section>
+    <h2><span class="n">01</span> ⚙️ Setup &amp; SSH</h2>
+    <p class="sub">Safe Linux lab (WSL/Ubuntu) aur remote login.</p>
+    <div class="cmds">
+      <div class="cmd">
+        <span class="line">wsl --install</span>
+        <p class="desc">Windows ke andar Linux (Ubuntu) install karta hai. <span class="ff">Admin PowerShell me chalao</span></p>
+      </div>
+      <div class="cmd">
+        <span class="line">ssh user@host -p port</span>
+        <p class="desc">Kisi doosre computer par door se (remote) login karta hai. <span class="ff">SSH = Secure Shell, port 22</span></p>
+        <p class="ex">ssh bandit0@bandit.labs.overthewire.org -p 2220</p>
+      </div>
+      <div class="cmd">
+        <span class="line">exit</span>
+        <p class="desc">Remote session se bahar niklo (wapas apni machine par).</p>
+      </div>
+    </div>
+    <div class="note ok"><span class="ic">🛡️</span><div><b>Golden Rule:</b> Hacking hamesha VM / online lab me. Sirf apne ya likhit-permission wale systems par. Windows data hamesha safe rahega.</div></div>
+  </section>
+
+  <!-- 2 NAVIGATION -->
+  <section>
+    <h2><span class="n">02</span> 🧭 Navigation</h2>
+    <p class="sub">Folders ke andar-bahar jaana aur dekhna.</p>
+    <div class="cmds">
+      <div class="cmd"><span class="line">pwd</span><p class="desc">Abhi kis folder me ho, wo dikhata hai. <span class="ff">Print Working Directory</span></p></div>
+      <div class="cmd"><span class="line">ls</span><p class="desc">Folder ke andar kya-kya hai, list karta hai (hidden nahi).</p></div>
+      <div class="cmd"><span class="line">ls -a</span><p class="desc">Hidden files bhi dikhao (jo <code>.</code> se shuru hoti hain). <span class="ff">a = all</span></p></div>
+      <div class="cmd"><span class="line">ls -la</span><p class="desc">Hidden + poori detail (permission, size, date) dono. <span class="ff">l = long</span></p></div>
+      <div class="cmd"><span class="line">cd folder</span><p class="desc">Us folder ke andar jao. <span class="ff">Change Directory · sirf folder me, file me nahi!</span></p></div>
+      <div class="cmd"><span class="line">cd ..</span><p class="desc">Ek folder peeche/bahar jao. <span class="ff">space zaroori: cd .. (cd.. galat)</span></p></div>
+      <div class="cmd"><span class="line">cd ~</span><p class="desc">Seedha apne home folder me. <span class="ff">~ = /home/username</span></p></div>
+      <div class="cmd"><span class="line">cd /</span><p class="desc">Sabse upar (root) folder me — Linux ki jad.</p></div>
+      <div class="cmd"><span class="line">clear</span><p class="desc">Screen saaf karo. <span class="ff">Ctrl + L bhi</span></p></div>
+    </div>
+  </section>
+
+  <!-- 3 FILES -->
+  <section>
+    <h2><span class="n">03</span> 📄 File &amp; Folder</h2>
+    <p class="sub">Banana, padhna, copy, rename, delete.</p>
+    <div class="cmds">
+      <div class="cmd"><span class="line">mkdir naam</span><p class="desc">Naya folder banao. <span class="ff">Make Directory</span></p><p class="ex">mkdir hacking-lab</p></div>
+      <div class="cmd"><span class="line">touch file.txt</span><p class="desc">Nayi khaali file banao.</p></div>
+      <div class="cmd"><span class="line">echo "text" &gt; file</span><p class="desc">File me text daalo (purana mit jayega). <span class="ff">ek &gt; = overwrite</span></p><p class="ex">echo "hello" &gt; notes.txt</p></div>
+      <div class="cmd"><span class="line">echo "text" &gt;&gt; file</span><p class="desc">Purane ke neeche jodo (kuch mitta nahi). <span class="ff">do &gt;&gt; = append</span></p></div>
+      <div class="cmd"><span class="line">cat file</span><p class="desc">File ke andar ka text padho. <span class="ff">conCATenate</span></p></div>
+      <div class="cmd"><span class="line">cp file copy</span><p class="desc">File ki copy banao. <span class="ff">CoPy</span></p><p class="ex">cp notes.txt backup.txt</p></div>
+      <div class="cmd"><span class="line">mv old new</span><p class="desc">Naam badlo ya move karo. <span class="ff">MoVe · maujood file par karoge to overwrite ho jayegi!</span></p></div>
+      <div class="cmd"><span class="line">rm file</span><p class="desc">File delete karo. <span class="ff">ReMove · permanent, koi Recycle Bin nahi!</span></p></div>
+      <div class="cmd"><span class="line">rm -r folder</span><p class="desc">Poora folder (andar sab kuch) delete karo. <span class="ff">r = recursive</span></p><p class="ex">rm -r /tmp/mera_folder</p></div>
+    </div>
+  </section>
+
+  <!-- 4 SYSTEM -->
+  <section>
+    <h2><span class="n">04</span> 🔧 System &amp; Install</h2>
+    <p class="sub">Admin power aur software install (Ubuntu ka "App Store").</p>
+    <div class="cmds">
+      <div class="cmd"><span class="line">sudo command</span><p class="desc">Admin (root) power ke saath chalao — password maangega. <span class="ff">Super User DO</span></p></div>
+      <div class="cmd"><span class="line">sudo apt update</span><p class="desc">Package list refresh — naya kya available hai, pata karo.</p></div>
+      <div class="cmd"><span class="line">sudo apt install naam -y</span><p class="desc">Software install karo. <span class="ff">-y = "haan, kar do"</span></p><p class="ex">sudo apt install nmap -y</p></div>
+      <div class="cmd"><span class="line">tool --version</span><p class="desc">Kisi tool ka version check karo (install hua ya nahi).</p></div>
+    </div>
+    <div class="note tip"><span class="ic">🔑</span><div><b>Password type karte waqt screen par kuch nahi dikhega</b> — ye normal hai (security). Bas type karke Enter.</div></div>
+  </section>
+
+  <!-- 5 NMAP -->
+  <section>
+    <h2><span class="n">05</span> 🔍 Nmap — Scanning</h2>
+    <p class="sub">Target ke khule "ports" (darwaze) aur unke software dhoondhna.</p>
+    <div class="cmds">
+      <div class="cmd"><span class="line">nmap target</span><p class="desc">Target ke ports scan karo (naam ya IP). <span class="ff">Kaun sa darwaza khula hai</span></p><p class="ex">nmap scanme.nmap.org</p></div>
+      <div class="cmd"><span class="line">nmap -sV target</span><p class="desc">Har khule port par kaun sa software + version chal raha hai. <span class="ff">Service Version</span></p></div>
+      <div class="cmd"><span class="line">nmap localhost</span><p class="desc">Apna hi computer scan karo (127.0.0.1) — practice ke liye.</p></div>
+    </div>
+    <p class="sub" style="margin:16px 0 8px;color:var(--ink);font-weight:600;">Port ki 3 haalat (STATE):</p>
+    <div class="states">
+      <div class="st o"><div class="tag">open</div><p>Darwaza khula — service chal rahi. Possible entry point.</p></div>
+      <div class="st c"><div class="tag">closed</div><p>Darwaza band hai (par wahan hai).</p></div>
+      <div class="st f"><div class="tag">filtered</div><p>Firewall beech me — pata nahi khula/band. Achhi security.</p></div>
+    </div>
+  </section>
+
+  <!-- 6 RECON -->
+  <section>
+    <h2><span class="n">06</span> 🕵️ Recon Soch — Vulnerability dhoondhna</h2>
+    <p class="sub">Version mila? Ab uski kamzori kaise dhoondhte hain.</p>
+    <div class="flow">
+      <div class="fstep"><span class="n">1</span><span class="t"><code>nmap -sV</code> se software + <b>version</b> nikaalo</span></div>
+      <div class="fstep"><span class="n">2</span><span class="t"><b>exploit-db.com</b> / Google par us version ki <b>CVE / known bug</b> dhoondo</span></div>
+      <div class="fstep"><span class="n">3</span><span class="t"><b>Range check:</b> version sach me kamzor range me hai? (jaise <code>&lt; 6.6</code> = 6.6 se neeche hi)</span></div>
+      <div class="fstep"><span class="n">4</span><span class="t"><b>Faisla:</b> raasta khula hai ya band. Har port par dohrao.</span></div>
+    </div>
+    <div class="note tip"><span class="ic">🧠</span><div><b>Bada lesson:</b> sirf software ka naam match hona kaafi nahi — exact <b>version</b> bhi kamzor range me hona chahiye.</div></div>
+  </section>
+
+  <!-- 7 SEARCH -->
+  <section>
+    <h2><span class="n">07</span> 🔎 Dhoondhna &amp; Filter</h2>
+    <p class="sub">Bahut saari files/text me se kaam ki cheez nikaalna.</p>
+    <div class="cmds">
+      <div class="cmd"><span class="line">file naam</span><p class="desc">File ke andar kis type ka data hai batao (text/binary/gzip...). <span class="ff">naam nahi, andar dekh kar</span></p><p class="ex">file data.txt</p></div>
+      <div class="cmd"><span class="line">./*</span><p class="desc"><b>*</b> = "sab kuch" (wildcard). <code>file ./*</code> = saari files ka type ek saath.</p></div>
+      <div class="cmd"><span class="line">find . -type f -size 1033c</span><p class="desc">Properties se file dhoondo (saare sub-folders me). <span class="ff">f=file, c=bytes</span></p></div>
+      <div class="cmd"><span class="line">find / -user U -group G -size 33c 2&gt;/dev/null</span><p class="desc">Poore server (/) me owner/group/size se dhoondo. <span class="ff">2&gt;/dev/null = errors chhupao</span></p></div>
+      <div class="cmd"><span class="line">grep "word" file</span><p class="desc">File ke andar sirf woh line jisme word ho. <span class="ff">"word" ki jagah asli word daalo!</span></p><p class="ex">grep millionth data.txt</p></div>
+    </div>
+    <table class="table-mini">
+      <tr><td>-type f</td><td>sirf files (folders nahi)</td></tr>
+      <tr><td>-size 33c</td><td>exactly 33 bytes (c = bytes)</td></tr>
+      <tr><td>-user / -group</td><td>owner user / group ke hisaab se</td></tr>
+    </table>
+  </section>
+
+  <!-- 8 PIPE -->
+  <section>
+    <h2><span class="n">08</span> 🔗 Pipe &amp; Jodna</h2>
+    <p class="sub">Ek command ka output doosre ko dena — Linux ka superpower.</p>
+    <div class="cmds">
+      <div class="cmd"><span class="line">command1 | command2</span><p class="desc"><b>Pipe |</b> — command1 ka OUTPUT command2 ko INPUT ki tarah do. <span class="ff">Keyboard: Shift + \</span></p><p class="ex">cat data.txt | grep word</p></div>
+      <div class="cmd"><span class="line">sort file</span><p class="desc">Lines ko order (alphabetically) me lagao — same lines paas aa jaati hain.</p></div>
+      <div class="cmd"><span class="line">sort file | uniq -u</span><p class="desc">Sirf woh line jo <b>akeli (unique)</b> ho. <span class="ff">uniq -u; pehle sort zaroori</span></p></div>
+    </div>
+    <div class="note warn"><span class="ic">⚠️</span><div><b>Pipe kab NAHI:</b> jab commands alag-alag kaam karein (jaise <code>mv</code>, <code>gunzip</code>, <code>file</code>) — unhe <b>alag lines</b> me chalao. Pipe sirf "output aage bhejna hai" tab.</div></div>
+  </section>
+
+  <!-- 9 SPECIAL FILES -->
+  <section>
+    <h2><span class="n">09</span> 🫥 Chhupi / Ajeeb Files</h2>
+    <p class="sub">Hidden files aur weird naam wali files handle karna.</p>
+    <div class="cmds">
+      <div class="cmd"><span class="line">ls -a</span><p class="desc">Hidden files dikhao (jo <code>.</code> se shuru — jaise <code>.bashrc</code>).</p></div>
+      <div class="cmd"><span class="line">cat ./-file</span><p class="desc"><b>./</b> = "yahin, is folder me". Naam jab <code>-</code> ya <code>.</code> se shuru ho tab lagao. <span class="ff">-  ko cat option samajh leta hai</span></p><p class="ex">cat ./-  ·  cat ./...Hiding</p></div>
+      <div class="cmd"><span class="line">cat "spaces in name"</span><p class="desc">Naam me spaces ho to <code>" "</code> me daalo. <span class="ff">Ya Tab key se auto-complete</span></p></div>
+      <div class="cmd"><span class="line">strings file</span><p class="desc">Binary/garbage file me se sirf padhne-layak text nikaalo.</p><p class="ex">strings data.txt | grep "==="</p></div>
+    </div>
+    <div class="note tip"><span class="ic">⌨️</span><div><b>Tab key = auto-complete.</b> Aadha naam type karke Tab dabao → terminal khud poora kar deta hai. Time bachta hai!</div></div>
+  </section>
+
+  <!-- 10 DECODE -->
+  <section>
+    <h2><span class="n">10</span> 🔐 Decode &amp; Cipher</h2>
+    <p class="sub">Chhupe/coded data ko wapas readable banana.</p>
+    <div class="cmds">
+      <div class="cmd"><span class="line">base64 -d file</span><p class="desc">Base64 encoded data ko decode karo. <span class="ff">-d = decode; == par khatam hone wala text = base64</span></p></div>
+      <div class="cmd"><span class="line">cat file | tr 'A-Za-z' 'N-ZA-Mn-za-m'</span><p class="desc"><b>ROT13</b> cipher decode (har letter 13 aage shift). <span class="ff">tr = translate/replace characters</span></p></div>
+    </div>
+    <div class="note warn"><span class="ic">🧠</span><div><b>Encoding ≠ Encryption!</b> Base64/ROT13 = sirf "format/code" — koi bhi ulta karke padh sakta hai, ye <b>protection nahi</b>. Encryption = asli tala jise bina key nahi khol sakte.</div></div>
+  </section>
+
+  <!-- 11 DECOMPRESS -->
+  <section>
+    <h2><span class="n">11</span> 🧅 Reverse &amp; Decompress</h2>
+    <p class="sub">Hexdump ulta karna + baar-baar compress ki hui file kholna (Level 12).</p>
+    <div class="cmds">
+      <div class="cmd"><span class="line">xxd -r file &gt; newfile</span><p class="desc">Hexdump ko ulta karke asli (binary) file banao. <span class="ff">-r = reverse; &gt; se save</span></p></div>
+    </div>
+    <p class="sub" style="margin:14px 0 6px;color:var(--ink);font-weight:600;">Compression kholne ki table:</p>
+    <table class="table-mini">
+      <tr><td>gzip</td><td><code>mv X X.gz</code> &nbsp;→&nbsp; <code>gunzip X.gz</code></td></tr>
+      <tr><td>bzip2</td><td><code>mv X X.bz2</code> &nbsp;→&nbsp; <code>bunzip2 X.bz2</code></td></tr>
+      <tr><td>POSIX tar</td><td><code>mv X X.tar</code> &nbsp;→&nbsp; <code>tar xf X.tar</code> (naya file → <code>ls</code>)</td></tr>
+      <tr><td>ASCII text</td><td>🎉 <code>cat X</code> → password mil gaya!</td></tr>
+    </table>
+    <div class="flow" style="margin-top:12px;">
+      <div class="fstep"><span class="n">↻</span><span class="t"><b>Loop:</b> <code>file X</code> → table dekho → kholo → phir <code>file X</code> ... jab tak "ASCII text"</span></div>
+    </div>
+    <div class="note warn"><span class="ic">⚠️</span><div><b>2 zaroori aadatein:</b> (1) Hamesha <b>sabse naye</b> nikle file par kaam karo, purane dabbe chhod do. (2) Ye steps <b>alag-alag lines</b> me — pipe <code>|</code> bilkul nahi.</div></div>
+  </section>
+
+  <!-- 12 MISTAKES -->
+  <section>
+    <h2><span class="n">12</span> 🚫 Galtiyaan jinse bachna hai</h2>
+    <table class="table-mini">
+      <tr><td>Transcript paste</td><td>Poora terminal text (prompt+output) paste mat karo — sirf command.</td></tr>
+      <tr><td>rm permanent</td><td>rm / rm -r se delete = wapas nahi aata. Dekh kar delete karo.</td></tr>
+      <tr><td>Placeholder</td><td>Format me <code>"word"</code>, <code>filename</code> = example. Apni asli cheez se replace karo.</td></tr>
+      <tr><td>cd on file</td><td>File me <code>cd</code> nahi hota ("Not a directory") — file padhne ko <code>cat</code>.</td></tr>
+      <tr><td>Pipe galat</td><td>Alag kaam wale commands ko <code>|</code> se mat jodo — race/error.</td></tr>
+      <tr><td>Location</td><td>Folder wahin milega jahan wo hai — <code>pwd</code> se check karo "main kahan hun".</td></tr>
+    </table>
+  </section>
+
+  <!-- 13 ETHICS -->
+  <section>
+    <h2><span class="n">13</span> ⚖️ Ethical Rules (yaad rakho)</h2>
+    <table class="table-mini">
+      <tr><td>Permission</td><td>Sirf apne / likhit-permission wale / CTF-lab systems par.</td></tr>
+      <tr><td>No spoilers</td><td>Kisi level ka password/solution kahin public post mat karo.</td></tr>
+      <tr><td>Don't break</td><td>Server ko crash/attack mat karo — sirf game/lab jaise design hai.</td></tr>
+      <tr><td>Clean up</td><td>Apni temporary files (jaise /tmp me) baad me delete karo.</td></tr>
+    </table>
+    <div class="note ok"><span class="ic">🎯</span><div>Ye game ke rules = asli duniya ke ethical-hacking rules ka chhota version. Bug bounty me bhi: scope ke andar raho, todo mat, sensitive info public mat karo.</div></div>
+  </section>
+
+  <!-- 14 QUICK INDEX -->
+  <section>
+    <h2><span class="n">14</span> ⚡ Quick Tool Index (sab ek nazar me)</h2>
+    <div class="index">
+      <div class="i"><b>pwd</b> — kahan hun</div>
+      <div class="i"><b>ls / -a / -la</b> — list / hidden / detail</div>
+      <div class="i"><b>cd</b> — folder me jao</div>
+      <div class="i"><b>mkdir</b> — folder banao</div>
+      <div class="i"><b>touch</b> — file banao</div>
+      <div class="i"><b>echo &gt; / &gt;&gt;</b> — likho / jodo</div>
+      <div class="i"><b>cat</b> — file padho</div>
+      <div class="i"><b>cp / mv / rm</b> — copy / rename / delete</div>
+      <div class="i"><b>rm -r</b> — folder delete</div>
+      <div class="i"><b>sudo</b> — admin power</div>
+      <div class="i"><b>apt</b> — software install</div>
+      <div class="i"><b>ssh</b> — remote login</div>
+      <div class="i"><b>nmap / -sV</b> — port / version scan</div>
+      <div class="i"><b>file</b> — type pehchano</div>
+      <div class="i"><b>* </b> — wildcard "sab"</div>
+      <div class="i"><b>find</b> — properties se dhoondo</div>
+      <div class="i"><b>grep</b> — text dhoondo</div>
+      <div class="i"><b>| (pipe)</b> — output aage bhejo</div>
+      <div class="i"><b>sort / uniq -u</b> — order / unique</div>
+      <div class="i"><b>strings</b> — binary se text</div>
+      <div class="i"><b>base64 -d</b> — decode</div>
+      <div class="i"><b>tr</b> — characters badlo (ROT13)</div>
+      <div class="i"><b>xxd -r</b> — hexdump ulta</div>
+      <div class="i"><b>gunzip / bunzip2</b> — decompress</div>
+      <div class="i"><b>tar xf</b> — archive kholo</div>
+      <div class="i"><b>clear / Tab</b> — saaf / auto-complete</div>
+    </div>
+  </section>
+
+  <footer>Bhavesh's Ethical Hacking Journey · Day 1 Complete · 12 Bandit levels · Keep going 🚀</footer>
+</div>

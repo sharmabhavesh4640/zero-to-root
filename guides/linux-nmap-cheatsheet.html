@@ -1,0 +1,224 @@
+<title>Linux + Nmap Cheat-Sheet</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:wght@400;700;900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --ground:#eaeeec; --surface:#f7f9f8; --surface-2:#fdfefe;
+    --ink:#111a18; --ink-soft:#3f4d4a; --ink-faint:#6b7976; --line:#d3dbd8;
+    --accent:#0c8577; --accent-deep:#075e54; --accent-wash:#d7ede9;
+    --signal:#b45309; --signal-wash:#f6e6cf;
+    --danger:#c0362c; --danger-wash:#f4dcd9;
+    --green:#1f8a4c; --green-wash:#d6ecdc;
+    --shadow:0 1px 2px rgba(17,26,24,.06),0 8px 24px rgba(17,26,24,.06);
+    --mono:'IBM Plex Mono',ui-monospace,Menlo,monospace;
+    --sans:'IBM Plex Sans',system-ui,sans-serif;
+    --display:'Chivo','IBM Plex Sans',system-ui,sans-serif;
+  }
+  :root:not([data-theme="light"]){
+    @media (prefers-color-scheme: dark){
+      --ground:#0b1210; --surface:#111c19; --surface-2:#16241f;
+      --ink:#e7efeb; --ink-soft:#aebbb6; --ink-faint:#7c8b86; --line:#26332e;
+      --accent:#2fd4bf; --accent-deep:#5fe3d1; --accent-wash:#123029;
+      --signal:#e6a959; --signal-wash:#2c2213;
+      --danger:#f0857a; --danger-wash:#301715;
+      --green:#4fd07a; --green-wash:#14301f;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0b1210; --surface:#111c19; --surface-2:#16241f;
+    --ink:#e7efeb; --ink-soft:#aebbb6; --ink-faint:#7c8b86; --line:#26332e;
+    --accent:#2fd4bf; --accent-deep:#5fe3d1; --accent-wash:#123029;
+    --signal:#e6a959; --signal-wash:#2c2213;
+    --danger:#f0857a; --danger-wash:#301715;
+    --green:#4fd07a; --green-wash:#14301f;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+  }
+  *{box-sizing:border-box}
+  body{background:var(--ground);color:var(--ink);font-family:var(--sans);line-height:1.55;
+    -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:920px;margin:0 auto;padding:clamp(20px,4vw,52px) clamp(16px,4vw,36px) 72px;}
+  code,.mono{font-family:var(--mono);}
+
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--accent-deep);display:flex;align-items:center;gap:10px;margin:0 0 16px;}
+  .eyebrow::before{content:"";width:28px;height:1px;background:var(--accent);}
+  h1{font-family:var(--display);font-weight:900;letter-spacing:-.02em;text-wrap:balance;
+    font-size:clamp(30px,6vw,50px);line-height:1.03;margin:0 0 14px;}
+  h1 .hl{color:var(--accent-deep);}
+  .lede{font-size:clamp(15px,2.2vw,18px);color:var(--ink-soft);max-width:60ch;margin:0 0 22px;}
+
+  .legend{display:inline-flex;gap:14px;flex-wrap:wrap;align-items:center;font-size:13px;
+    color:var(--ink-faint);background:var(--surface);border:1px solid var(--line);
+    border-radius:10px;padding:9px 14px;margin-bottom:8px;}
+  .legend .cmd{font-family:var(--mono);color:var(--accent-deep);background:var(--accent-wash);
+    padding:2px 7px;border-radius:5px;font-size:12.5px;}
+
+  section.card{background:var(--surface);border:1px solid var(--line);border-radius:15px;
+    box-shadow:var(--shadow);padding:20px 22px;margin-top:20px;}
+  .card > h2{font-family:var(--display);font-weight:700;font-size:20px;letter-spacing:-.01em;
+    margin:0 0 4px;display:flex;align-items:center;gap:10px;}
+  .card > h2 .ic{font-size:19px;}
+  .card > .sub{font-size:13.5px;color:var(--ink-faint);margin:0 0 16px;}
+
+  .rows{display:flex;flex-direction:column;}
+  .row{display:grid;grid-template-columns:minmax(150px,220px) 1fr;gap:16px;
+    padding:11px 0;border-top:1px solid var(--line);align-items:baseline;}
+  .row:first-child{border-top:none;}
+  .row .c{font-family:var(--mono);font-size:13.5px;font-weight:500;}
+  .row .c b{color:var(--accent-deep);}
+  .row .m{font-size:14.5px;color:var(--ink-soft);}
+  .row .m .ff{font-family:var(--mono);font-size:12px;color:var(--ink-faint);
+    display:block;margin-top:2px;letter-spacing:.02em;}
+  .row .m em{color:var(--ink);font-style:normal;font-weight:600;}
+  @media(max-width:540px){.row{grid-template-columns:1fr;gap:3px;}}
+
+  /* port states */
+  .states{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:4px;}
+  .state{border-radius:12px;padding:14px 16px;border:1px solid var(--line);background:var(--surface-2);}
+  .state .tag{font-family:var(--mono);font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;}
+  .state .tag::before{content:"";width:9px;height:9px;border-radius:50%;background:var(--ink-faint);}
+  .state.open .tag{color:var(--green);} .state.open .tag::before{background:var(--green);}
+  .state.closed .tag{color:var(--danger);} .state.closed .tag::before{background:var(--danger);}
+  .state.filtered .tag{color:var(--signal);} .state.filtered .tag::before{background:var(--signal);}
+  .state p{margin:6px 0 0;font-size:13.5px;color:var(--ink-soft);}
+
+  /* workflow */
+  .flow{display:flex;flex-direction:column;gap:0;counter-reset:step;}
+  .flow .step{display:flex;gap:14px;align-items:flex-start;padding:12px 0;position:relative;}
+  .flow .step:not(:last-child)::after{content:"";position:absolute;left:15px;top:34px;bottom:-6px;
+    width:2px;background:var(--accent-wash);}
+  .flow .step .n{flex:none;width:32px;height:32px;border-radius:9px;background:var(--accent-wash);
+    color:var(--accent-deep);font-family:var(--mono);font-weight:600;font-size:14px;
+    display:flex;align-items:center;justify-content:center;z-index:1;}
+  .flow .step .t{font-size:14.5px;color:var(--ink);padding-top:5px;}
+  .flow .step .t b{color:var(--accent-deep);}
+  .flow .step .t .mono{background:var(--surface-2);border:1px solid var(--line);padding:1px 6px;
+    border-radius:5px;font-size:12.5px;}
+
+  .note{display:flex;gap:12px;border-radius:12px;padding:14px 16px;font-size:14px;
+    color:var(--ink-soft);margin-top:14px;}
+  .note.safe{background:var(--danger-wash);border:1px solid color-mix(in srgb,var(--danger) 30%,transparent);}
+  .note.tip{background:var(--signal-wash);border:1px solid color-mix(in srgb,var(--signal) 30%,transparent);}
+  .note b{color:var(--ink);}
+  .note .ic{font-size:17px;flex:none;}
+
+  .gotchas{list-style:none;margin:6px 0 0;padding:0;display:flex;flex-direction:column;gap:11px;}
+  .gotchas li{display:flex;gap:11px;font-size:14px;color:var(--ink-soft);}
+  .gotchas li .x{flex:none;color:var(--danger);font-family:var(--mono);font-weight:600;}
+  .gotchas li b{color:var(--ink);}
+
+  footer{margin-top:36px;text-align:center;font-size:12.5px;color:var(--ink-faint);
+    font-family:var(--mono);letter-spacing:.03em;}
+
+  @media print{
+    @page{margin:12mm;}
+    :root{ /* force the light palette for print */
+      --ground:#ffffff; --surface:#f7f9f8; --surface-2:#fdfefe;
+      --ink:#111a18; --ink-soft:#3f4d4a; --ink-faint:#6b7976; --line:#d3dbd8;
+      --accent:#0c8577; --accent-deep:#075e54; --accent-wash:#d7ede9;
+      --signal:#b45309; --signal-wash:#f6e6cf; --danger:#c0362c; --danger-wash:#f4dcd9;
+      --green:#1f8a4c; --green-wash:#d6ecdc;
+    }
+    *{-webkit-print-color-adjust:exact;print-color-adjust:exact;}
+    body{background:#fff;}
+    .wrap{padding:0;max-width:100%;}
+    section.card{break-inside:avoid;box-shadow:none;}
+    .state,.row,.flow .step,.note,.gotchas li{break-inside:avoid;}
+    h1{font-size:34px;}
+  }
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Bhavesh · Phase 01 Revision</p>
+  <h1>Linux + Nmap<br><span class="hl">Cheat-Sheet</span></h1>
+  <p class="lede">Ab tak jo seekha, sab yahan. Jab bhi koi command bhoolo — yahan dekh lo. Ratna nahi hai, samajhna hai. 🐧</p>
+
+  <div class="legend">
+    <span><span class="cmd">command</span> = jo type karte ho</span>
+    <span>→ uske aage uska matlab &amp; full-form</span>
+  </div>
+
+  <section class="card">
+    <h2><span class="ic">🧭</span> Ghoomna-phirna (Navigation)</h2>
+    <p class="sub">Folders ke andar-bahar jaana, aur dekhna ki kya hai.</p>
+    <div class="rows">
+      <div class="row"><div class="c"><b>pwd</b></div><div class="m">Abhi kis folder me ho, wo dikhata hai <span class="ff">Print Working Directory</span></div></div>
+      <div class="row"><div class="c"><b>ls</b></div><div class="m">Is folder ke andar kya-kya hai, list karta hai <span class="ff">LiSt</span></div></div>
+      <div class="row"><div class="c"><b>ls</b> -la</div><div class="m">Sab dikhata hai — <em>chhupi (hidden) files</em> bhi, details ke saath</div></div>
+      <div class="row"><div class="c"><b>cd</b> folder</div><div class="m">Us folder ke andar chale jao <span class="ff">Change Directory</span></div></div>
+      <div class="row"><div class="c"><b>cd</b> ..</div><div class="m">Ek folder <em>peeche/bahar</em> jao</div></div>
+      <div class="row"><div class="c"><b>cd</b> ~</div><div class="m">Seedha apne <em>home</em> folder me (<code>~</code> = /home/bhavesh)</div></div>
+      <div class="row"><div class="c"><b>cd</b> /</div><div class="m">Sabse upar wale <em>root</em> folder me (Linux ki jad)</div></div>
+      <div class="row"><div class="c"><b>clear</b></div><div class="m">Screen saaf karo <span class="ff">Ctrl + L bhi chalta hai</span></div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="ic">📄</span> File &amp; Folder</h2>
+    <p class="sub">Banane, padhne, copy, naam badalne aur delete karne ke commands.</p>
+    <div class="rows">
+      <div class="row"><div class="c"><b>mkdir</b> naam</div><div class="m">Naya folder banao <span class="ff">MaKe DIRectory</span></div></div>
+      <div class="row"><div class="c"><b>touch</b> file.txt</div><div class="m">Nayi khaali file banao</div></div>
+      <div class="row"><div class="c"><b>echo</b> "text" &gt; file</div><div class="m"><em>Ek</em> &gt; = file me text <em>daalo</em> (purana mit jaayega)</div></div>
+      <div class="row"><div class="c"><b>echo</b> "text" &gt;&gt; file</div><div class="m"><em>Do</em> &gt;&gt; = purane ke <em>neeche jodo</em> (kuch mitta nahi)</div></div>
+      <div class="row"><div class="c"><b>cat</b> file.txt</div><div class="m">File ke andar kya likha hai, padho <span class="ff">conCATenate</span></div></div>
+      <div class="row"><div class="c"><b>cp</b> file copy</div><div class="m">File ki copy banao <span class="ff">CoPy</span></div></div>
+      <div class="row"><div class="c"><b>mv</b> old new</div><div class="m">Naam badlo ya kahin move karo <span class="ff">MoVe</span></div></div>
+      <div class="row"><div class="c"><b>rm</b> file.txt</div><div class="m">File delete karo <span class="ff">ReMove — permanent!</span></div></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="ic">⚙️</span> System &amp; Install</h2>
+    <p class="sub">Admin power aur software install karna (Ubuntu ka "App Store").</p>
+    <div class="rows">
+      <div class="row"><div class="c"><b>sudo</b> ...command</div><div class="m">Admin (root) power ke saath chalao — <em>password maangega</em> <span class="ff">Super User DO</span></div></div>
+      <div class="row"><div class="c"><b>sudo apt</b> update</div><div class="m">Package list refresh — kya-kya naya available hai, pata karo</div></div>
+      <div class="row"><div class="c"><b>sudo apt install</b> naam -y</div><div class="m">Software install karo (<code>-y</code> = "haan, kar do")</div></div>
+      <div class="row"><div class="c">tool <b>--version</b></div><div class="m">Kisi tool ka version check karo (install hua ya nahi)</div></div>
+    </div>
+    <div class="note tip"><span class="ic">🔑</span><div><b>Password type karte waqt screen par kuch nahi dikhega</b> — ye normal hai (security ke liye). Bas type karke Enter dabao.</div></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="ic">🔍</span> Nmap — Scanning</h2>
+    <p class="sub">Target ke khule "darwaze" (ports) aur unke software dhoondhne ka tool.</p>
+    <div class="rows">
+      <div class="row"><div class="c"><b>nmap</b> target</div><div class="m">Target ke khule/band ports scan karo (naam ya IP dono chalega)</div></div>
+      <div class="row"><div class="c"><b>nmap -sV</b> target</div><div class="m">Har khule port par <em>kaun sa software + version</em> chal raha hai, wo pata karo <span class="ff">Service Version</span></div></div>
+      <div class="row"><div class="c"><b>nmap</b> localhost</div><div class="m">Apna hi computer scan karo (127.0.0.1) — practice ke liye</div></div>
+    </div>
+    <p class="sub" style="margin:18px 0 10px;font-weight:600;color:var(--ink);">Port ki 3 haalat (STATE):</p>
+    <div class="states">
+      <div class="state open"><div class="tag">open</div><p>Darwaza <b>khula</b> — service chal rahi hai. Hacker ke liye possible entry point.</p></div>
+      <div class="state closed"><div class="tag">closed</div><p>Darwaza <b>band</b> hai (par wahan hai). Koi service nahi chal rahi.</p></div>
+      <div class="state filtered"><div class="tag">filtered</div><p><b>Firewall</b> beech me hai — pata nahi chalta khula ya band. Achhi security.</p></div>
+    </div>
+  </section>
+
+  <section class="card">
+    <h2><span class="ic">🕵️</span> Recon Soch — Hacker ka Formula</h2>
+    <p class="sub">Version mila? Ab uski kamzori kaise dhoondte hain. Yahi "vulnerability hacking" ka dil hai.</p>
+    <div class="flow">
+      <div class="step"><div class="n">1</div><div class="t"><b>Scan karo</b> — <span class="mono">nmap -sV</span> se port + software + <b>version</b> nikaalo</div></div>
+      <div class="step"><div class="n">2</div><div class="t"><b>Research karo</b> — <span class="mono">exploit-db.com</span> ya Google par us version ki <b>CVE / known bug</b> dhoondo</div></div>
+      <div class="step"><div class="n">3</div><div class="t"><b>Range check karo</b> — dekho version <em>sach me</em> kamzor range me hai? (jaise <span class="mono">&lt; 6.6</span> matlab 6.6 se neeche hi kaam karega)</div></div>
+      <div class="step"><div class="n">4</div><div class="t"><b>Faisla</b> — raasta khula hai ya band. Har port par ye process dohrao.</div></div>
+    </div>
+    <div class="note tip"><span class="ic">🧠</span><div><b>Sabse bada lesson:</b> sirf software ka naam match hona kaafi nahi — <b>exact version</b> bhi kamzor range me hona chahiye. Naye log yahi galti karte hain.</div></div>
+  </section>
+
+  <section class="card">
+    <h2><span class="ic">⚠️</span> Galtiyaan jinse bachna hai</h2>
+    <ul class="gotchas">
+      <li><span class="x">✗</span><div><b>Poora terminal text (prompt + output) paste mat karo</b> — sirf command copy karo. Warna har line "command not found" degi (harmless, par messy).</div></li>
+      <li><span class="x">✗</span><div><b>rm se delete = permanent</b> — Linux me Recycle Bin nahi hota. Delete se pehle ek baar dekh lo.</div></li>
+      <li><span class="x">✗</span><div><b>Spelling galti = "command not found"</b> — jaise <code>echoo</code> ya <code>cls</code>. Dhyan se type karo.</div></li>
+    </ul>
+    <div class="note safe"><span class="ic">🛡️</span><div><b>Golden Rule:</b> Hacking hamesha VM / online lab ke andar. Sirf apne ya likhit-permission wale systems. Kisi aur ka bina permission = illegal (IT Act).</div></div>
+  </section>
+
+  <footer>Bhavesh's Ethical Hacking Journey · Phase 01 · Keep practicing 🚀</footer>
+</div>

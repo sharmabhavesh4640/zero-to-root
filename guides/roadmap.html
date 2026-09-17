@@ -1,0 +1,356 @@
+<title>Zero to Hero Hacking Path</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Chivo:ital,wght@0,400;0,600;0,700;0,900&family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{
+    --ground:#eaeeec;
+    --surface:#f7f9f8;
+    --surface-2:#fdfefe;
+    --ink:#111a18;
+    --ink-soft:#3f4d4a;
+    --ink-faint:#6b7976;
+    --line:#d3dbd8;
+    --accent:#0c8577;
+    --accent-deep:#075e54;
+    --accent-wash:#d7ede9;
+    --signal:#b45309;
+    --signal-wash:#f6e6cf;
+    --danger:#c0362c;
+    --danger-wash:#f4dcd9;
+    --shadow:0 1px 2px rgba(17,26,24,.06),0 8px 24px rgba(17,26,24,.06);
+    --mono:'IBM Plex Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+    --sans:'IBM Plex Sans',system-ui,sans-serif;
+    --display:'Chivo','IBM Plex Sans',system-ui,sans-serif;
+  }
+  :root:not([data-theme="light"]){
+    @media (prefers-color-scheme: dark){
+      --ground:#0b1210;
+      --surface:#111c19;
+      --surface-2:#16241f;
+      --ink:#e7efeb;
+      --ink-soft:#aebbb6;
+      --ink-faint:#7c8b86;
+      --line:#26332e;
+      --accent:#2fd4bf;
+      --accent-deep:#5fe3d1;
+      --accent-wash:#123029;
+      --signal:#e6a959;
+      --signal-wash:#2c2213;
+      --danger:#f0857a;
+      --danger-wash:#301715;
+      --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0b1210;
+    --surface:#111c19;
+    --surface-2:#16241f;
+    --ink:#e7efeb;
+    --ink-soft:#aebbb6;
+    --ink-faint:#7c8b86;
+    --line:#26332e;
+    --accent:#2fd4bf;
+    --accent-deep:#5fe3d1;
+    --accent-wash:#123029;
+    --signal:#e6a959;
+    --signal-wash:#2c2213;
+    --danger:#f0857a;
+    --danger-wash:#301715;
+    --shadow:0 1px 2px rgba(0,0,0,.4),0 10px 30px rgba(0,0,0,.35);
+  }
+
+  *{box-sizing:border-box}
+  body{background:var(--ground);color:var(--ink);font-family:var(--sans);line-height:1.6;
+    -webkit-font-smoothing:antialiased;}
+  .wrap{max-width:960px;margin:0 auto;padding:clamp(20px,4vw,56px) clamp(16px,4vw,40px) 80px;}
+
+  a{color:var(--accent-deep);}
+  code,.mono{font-family:var(--mono);font-size:.86em;}
+
+  /* ---------- Header ---------- */
+  .eyebrow{font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+    color:var(--accent-deep);display:flex;align-items:center;gap:10px;margin:0 0 18px;}
+  .eyebrow::before{content:"";width:30px;height:1px;background:var(--accent);}
+  h1{font-family:var(--display);font-weight:900;letter-spacing:-.02em;text-wrap:balance;
+    font-size:clamp(34px,7vw,60px);line-height:1.02;margin:0 0 18px;}
+  h1 .hl{color:var(--accent-deep);}
+  .lede{font-size:clamp(16px,2.3vw,19px);color:var(--ink-soft);max-width:60ch;margin:0 0 28px;}
+
+  /* progress */
+  .progress-card{background:var(--surface);border:1px solid var(--line);border-radius:14px;
+    padding:18px 20px;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:12px;}
+  .progress-top{display:flex;justify-content:space-between;align-items:baseline;gap:12px;flex-wrap:wrap;}
+  .progress-top strong{font-family:var(--display);font-weight:700;font-size:17px;}
+  .progress-count{font-family:var(--mono);font-size:14px;color:var(--ink-faint);
+    font-variant-numeric:tabular-nums;}
+  .bar{height:10px;border-radius:99px;background:var(--accent-wash);overflow:hidden;}
+  .bar > i{display:block;height:100%;width:0;border-radius:99px;
+    background:linear-gradient(90deg,var(--accent),var(--accent-deep));transition:width .4s ease;}
+  .progress-hint{font-size:13px;color:var(--ink-faint);}
+
+  /* golden rule callout */
+  .callout{margin:26px 0 6px;border-radius:14px;padding:18px 20px;display:flex;gap:14px;
+    background:var(--signal-wash);border:1px solid color-mix(in srgb,var(--signal) 34%,transparent);}
+  .callout .ic{font-size:20px;line-height:1.3;}
+  .callout b{color:var(--ink);}
+  .callout p{margin:0;font-size:14.5px;color:var(--ink-soft);}
+  .callout.danger{background:var(--danger-wash);
+    border-color:color-mix(in srgb,var(--danger) 34%,transparent);}
+
+  /* ---------- Timeline ---------- */
+  .phases{position:relative;margin-top:40px;display:flex;flex-direction:column;gap:20px;}
+  .phase{background:var(--surface);border:1px solid var(--line);border-radius:16px;
+    overflow:hidden;box-shadow:var(--shadow);}
+  .phase > header{display:flex;gap:16px;align-items:flex-start;padding:20px 22px 16px;
+    cursor:pointer;user-select:none;}
+  .num{font-family:var(--mono);font-weight:600;font-size:13px;color:var(--accent-deep);
+    background:var(--accent-wash);border-radius:8px;padding:6px 9px;flex:none;letter-spacing:.04em;}
+  .phase-tt{flex:1;min-width:0;}
+  .phase-tt h2{font-family:var(--display);font-weight:700;font-size:clamp(19px,3vw,23px);
+    letter-spacing:-.01em;margin:0 0 4px;line-height:1.15;}
+  .phase-tt .goal{font-size:14.5px;color:var(--ink-soft);margin:0;}
+  .meta{display:flex;flex-direction:column;align-items:flex-end;gap:6px;flex:none;}
+  .chip{font-family:var(--mono);font-size:11px;letter-spacing:.04em;padding:4px 8px;border-radius:6px;
+    background:var(--surface-2);border:1px solid var(--line);color:var(--ink-faint);white-space:nowrap;}
+  .chip.time{color:var(--accent-deep);border-color:color-mix(in srgb,var(--accent) 30%,transparent);}
+  .caret{width:18px;height:18px;color:var(--ink-faint);transition:transform .25s ease;flex:none;margin-top:3px;}
+  .phase.open .caret{transform:rotate(180deg);}
+
+  .body{display:grid;grid-template-rows:0fr;transition:grid-template-rows .3s ease;}
+  .phase.open .body{grid-template-rows:1fr;}
+  .body > .inner{overflow:hidden;}
+  .body-pad{padding:0 22px 22px;border-top:1px solid var(--line);margin-top:2px;padding-top:18px;
+    display:flex;flex-direction:column;gap:20px;}
+
+  .block h3{font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+    color:var(--ink-faint);margin:0 0 10px;font-weight:600;}
+
+  /* checklist */
+  ul.tasks{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:8px;}
+  ul.tasks li{display:flex;gap:11px;align-items:flex-start;font-size:15px;}
+  ul.tasks input{appearance:none;-webkit-appearance:none;margin:0;flex:none;width:19px;height:19px;
+    border:1.5px solid var(--line);border-radius:6px;background:var(--surface-2);cursor:pointer;
+    margin-top:2px;position:relative;transition:.15s;}
+  ul.tasks input:hover{border-color:var(--accent);}
+  ul.tasks input:checked{background:var(--accent);border-color:var(--accent);}
+  ul.tasks input:checked::after{content:"";position:absolute;left:5.5px;top:2px;width:4px;height:9px;
+    border:solid #fff;border-width:0 2px 2px 0;transform:rotate(42deg);}
+  ul.tasks input:focus-visible{outline:2px solid var(--accent-deep);outline-offset:2px;}
+  ul.tasks label{cursor:pointer;}
+  ul.tasks li.done label{color:var(--ink-faint);text-decoration:line-through;
+    text-decoration-color:var(--ink-faint);}
+  ul.tasks .k{font-family:var(--mono);color:var(--ink);background:var(--accent-wash);
+    padding:1px 6px;border-radius:5px;font-size:12.5px;}
+
+  /* toolgrid */
+  .tools{display:flex;flex-wrap:wrap;gap:8px;}
+  .tool{font-family:var(--mono);font-size:12.5px;padding:6px 10px;border-radius:7px;
+    background:var(--surface-2);border:1px solid var(--line);color:var(--ink-soft);}
+  .tool b{color:var(--accent-deep);font-weight:600;}
+
+  /* milestone */
+  .milestone{display:flex;gap:12px;align-items:flex-start;background:var(--accent-wash);
+    border-radius:12px;padding:14px 16px;}
+  .milestone .ic{font-size:17px;}
+  .milestone .t{font-size:14.5px;color:var(--ink);}
+  .milestone .t b{color:var(--accent-deep);}
+
+  .two{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+  @media(max-width:560px){.two{grid-template-columns:1fr;}
+    .meta{flex-direction:row;flex-wrap:wrap;}
+    .phase > header{flex-wrap:wrap;}}
+
+  /* footer note */
+  .foot{margin-top:44px;padding:22px 24px;border:1px dashed var(--line);border-radius:14px;
+    background:var(--surface);font-size:14px;color:var(--ink-soft);}
+  .foot b{color:var(--ink);font-family:var(--display);}
+  .reset{margin-top:14px;font-family:var(--mono);font-size:12px;color:var(--ink-faint);
+    background:none;border:1px solid var(--line);border-radius:7px;padding:6px 11px;cursor:pointer;}
+  .reset:hover{border-color:var(--danger);color:var(--danger);}
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;}}
+</style>
+
+<div class="wrap">
+  <p class="eyebrow">Ethical Hacking · Beginner → Competition</p>
+  <h1>0 se <span class="hl">Hero</span> tak —<br>Hacking Roadmap</h1>
+  <p class="lede">Windows par safe rehte hue, step-by-step. Har phase ke aage badhne se pehle uske checkboxes tick karo — progress apne aap save hoti rahegi (sirf is browser me).</p>
+
+  <div class="progress-card">
+    <div class="progress-top">
+      <strong>Tumhari Progress</strong>
+      <span class="progress-count"><span id="pc-done">0</span> / <span id="pc-total">0</span> steps · <span id="pc-pct">0%</span></span>
+    </div>
+    <div class="bar"><i id="pbar"></i></div>
+    <p class="progress-hint" id="phint">Phase 00 se shuru karo 👇</p>
+  </div>
+
+  <div class="callout danger">
+    <span class="ic">🛡️</span>
+    <p><b>Golden Rule — Data Safety:</b> Hacking hamesha <b>VM ya online lab ke andar</b> karni hai, apne asli Windows par kabhi nahi. Isse tumhara data delete/change nahi hoga, aur tum bhi legally safe raho. Real systems sirf tab jab likhit permission ho.</p>
+  </div>
+
+  <div class="phases" id="phases"><!-- injected --></div>
+
+  <div class="foot">
+    <b>Yaad rakhna:</b> 70% practice, 30% theory. Sirf video dekhne se koi hacker nahi banta — har cheez apne haathon se lab me karo. Roz ka 1 ghanta, 2 saal = expert. Har CTF ke baad "writeups" padho (dusron ne kaise solve kiya) — wahi asli seekh hai.
+    <br>
+    <button class="reset" id="reset">↺ Progress reset karo</button>
+  </div>
+</div>
+
+<script>
+const DATA=[
+ {n:"00",t:"Setup & Safety",time:"2–3 din",
+  goal:"Safe lab banao taaki Windows data hamesha surakshit rahe.",
+  tasks:[
+   {id:"s0a",h:"PowerShell (Admin) me <span class='k'>wsl --install</span> chala kar Ubuntu Linux install karo"},
+   {id:"s0b",h:"<b>VirtualBox</b> + <b>Kali Linux</b> ready VM download karke import karo (asli hacking lab)"},
+   {id:"s0c",h:"Samjho: sab kaam VM/online lab ke andar — Windows par nahi"},
+   {id:"s0d",h:"IT Act 2000 basics padho — bina permission hacking illegal hai"},
+  ],
+  tools:[["WSL","Ubuntu"],["VirtualBox",""],["Kali Linux",""]],
+  ms:"VM start ho gayi aur Windows data safe hai — foundation ready."},
+
+ {n:"01",t:"Foundations — Base jo sab miss karte hain",time:"1–2 mahine",
+  goal:"Tools se pehle: Linux, networking aur Python ka pakka base.",
+  tasks:[
+   {id:"s1a",h:"<b>Linux command line</b> — files, permissions, bash basics"},
+   {id:"s1b",h:"<b>OverTheWire: Bandit</b> game poora khelo (Linux + logic ke liye best)"},
+   {id:"s1c",h:"<b>Networking</b> — IP, ports, TCP/UDP, DNS, HTTP kaise kaam karte hain"},
+   {id:"s1d",h:"<b>Python</b> basics — variables, loops, functions, requests library"},
+   {id:"s1e",h:"Pehla apna tool: ek simple <b>port scanner</b> Python me likho"},
+  ],
+  tools:[["OverTheWire","Bandit"],["Python",""],["Wireshark",""],["nmap",""]],
+  ms:"Bandit clear + apna pehla Python tool chal gaya — ab tum script kiddie nahi ho."},
+
+ {n:"02",t:"Pehla Domain — Web Hacking",time:"2 mahine",
+  goal:"Sabse mazedaar aur job-heavy domain. CTF me sabse zyada aata hai.",
+  tasks:[
+   {id:"s2a",h:"<b>OWASP Top 10</b> samjho — SQL Injection, XSS, CSRF, auth bypass"},
+   {id:"s2b",h:"<b>Burp Suite</b> chalana seekho (web ka sabse bada tool)"},
+   {id:"s2c",h:"<b>sqlmap</b> se SQL injection practice (apne lab par)"},
+   {id:"s2d",h:"<b>TryHackMe</b> ke web rooms complete karo (step-by-step guided)"},
+  ],
+  tools:[["Burp Suite",""],["OWASP ZAP",""],["sqlmap",""],["TryHackMe",""]],
+  ms:"Ek vulnerable web app ko end-to-end hack karke flag nikaal liya."},
+
+ {n:"03",t:"Recon, Tools & Exploitation",time:"1–2 mahine",
+  goal:"Standard tools master karo aur ready-made vs khud ka faisla samajho.",
+  tasks:[
+   {id:"s3a",h:"<b>Nmap</b> deeply — scanning, service/version detection, scripts"},
+   {id:"s3b",h:"<b>Metasploit</b> basics — vulnerability ko exploit karke access lena"},
+   {id:"s3c",h:"Privilege escalation — normal user se admin/root tak (Linux + Windows)"},
+   {id:"s3d",h:"Choti automation scripts likho jo tools ko combine karein"},
+  ],
+  tools:[["Nmap",""],["Metasploit",""],["Nikto",""],["Hydra",""]],
+  ms:"Ek machine me ghus kar root/admin tak pahunch gaye."},
+
+ {n:"04",t:"CTF Practice (Jeopardy)",time:"Regular — hamesha",
+  goal:"Roz solve karo. Yahi consistency tumhe competition-ready banati hai.",
+  tasks:[
+   {id:"s4a",h:"<b>PicoCTF</b> ke beginner challenges (bilkul free)"},
+   {id:"s4b",h:"<b>HackTheBox</b> ki easy machines solve karo"},
+   {id:"s4c",h:"Categories cover karo: Web · Crypto · Forensics · OSINT"},
+   {id:"s4d",h:"Har solve ka apna <b>writeup</b> likho + doosron ke padho"},
+  ],
+  tools:[["PicoCTF",""],["HackTheBox",""],["CTFtime.org",""]],
+  ms:"Pehla live CTF (CTFtime se) me participate kiya — chahe kam points."},
+
+ {n:"05",t:"Advanced — Reverse Eng & Pwn",time:"3–4 mahine",
+  goal:"Sabse hardcore skill. Attack-Defense ka decisive hathiyar.",
+  tasks:[
+   {id:"s5a",h:"Thodi <b>C</b> aur <b>Assembly</b> — memory, stack, registers samjho"},
+   {id:"s5b",h:"<b>Reverse Engineering</b> — Ghidra se programs andar se padhna"},
+   {id:"s5c",h:"<b>Binary Exploitation (Pwn)</b> — buffer overflow, ROP basics"},
+   {id:"s5d",h:"<b>pwntools</b> (Python) se exploit scripts likhna seekho"},
+  ],
+  tools:[["Ghidra",""],["GDB / pwndbg",""],["pwntools",""],["Pwn.college",""]],
+  ms:"Ek binary ka apna exploit khud likh kar shell mila."},
+
+ {n:"06",t:"Attack-Defense & Competition Jeetna",time:"Goal 🏆",
+  goal:"Team game — apna server bachao, doosron ka hack karo, real-time.",
+  tasks:[
+   {id:"s6a",h:"Ek <b>team</b> join karo (college club ya online) — ye akele nahi khela jaata"},
+   {id:"s6b",h:"Defense: apni service ka bug dhoondh kar turant <b>patch</b> karna"},
+   {id:"s6c",h:"Attack: doosri teams par <b>automated exploit</b> chalana (Python must)"},
+   {id:"s6d",h:"<b>CTFtime.org</b> par Attack-Defense events me regular khelo"},
+   {id:"s6e",h:"Side income: <b>Bug Bounty</b> (HackerOne/Bugcrowd) + <b>OSCP</b> cert ka target"},
+  ],
+  tools:[["CTFtime",""],["HackerOne",""],["Bugcrowd",""],["OSCP",""]],
+  ms:"Ek Attack-Defense competition me team ke saath ranked finish — Hero level 🎉"},
+];
+
+const phasesEl=document.getElementById('phases');
+let allIds=[];
+DATA.forEach((p,i)=>{
+  p.tasks.forEach(t=>allIds.push(t.id));
+  const sec=document.createElement('section');
+  sec.className='phase'+(i===0?' open':'');
+  sec.innerHTML=`
+   <header>
+     <span class="num">${p.n}</span>
+     <div class="phase-tt"><h2>${p.t}</h2><p class="goal">${p.goal}</p></div>
+     <div class="meta"><span class="chip time">⏱ ${p.time}</span></div>
+     <svg class="caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+   </header>
+   <div class="body"><div class="inner"><div class="body-pad">
+     <div class="block">
+       <h3>Checklist</h3>
+       <ul class="tasks">
+         ${p.tasks.map(t=>`<li data-id="${t.id}"><input type="checkbox" id="${t.id}"><label for="${t.id}">${t.h}</label></li>`).join('')}
+       </ul>
+     </div>
+     <div class="two">
+       <div class="block">
+         <h3>Tools / Platforms</h3>
+         <div class="tools">${p.tools.map(t=>`<span class="tool"><b>${t[0]}</b>${t[1]?' '+t[1]:''}</span>`).join('')}</div>
+       </div>
+       <div class="block">
+         <h3>Milestone 🎯</h3>
+         <div class="milestone"><span class="ic">✅</span><span class="t">${p.ms}</span></div>
+       </div>
+     </div>
+   </div></div></div>`;
+  sec.querySelector('header').addEventListener('click',e=>{
+    if(e.target.tagName==='INPUT'||e.target.tagName==='LABEL')return;
+    sec.classList.toggle('open');
+  });
+  phasesEl.appendChild(sec);
+});
+
+// ---- persistence ----
+const KEY='hackpath.v1';
+let state={};
+try{state=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){state={};}
+
+function paint(){
+  let done=0;
+  allIds.forEach(id=>{
+    const box=document.getElementById(id);
+    const li=box.closest('li');
+    if(state[id]){box.checked=true;li.classList.add('done');done++;}
+    else{box.checked=false;li.classList.remove('done');}
+  });
+  const total=allIds.length, pct=total?Math.round(done/total*100):0;
+  document.getElementById('pc-done').textContent=done;
+  document.getElementById('pc-total').textContent=total;
+  document.getElementById('pc-pct').textContent=pct+'%';
+  document.getElementById('pbar').style.width=pct+'%';
+  const hint=document.getElementById('phint');
+  if(pct===0)hint.textContent='Phase 00 se shuru karo 👇';
+  else if(pct===100)hint.textContent='🏆 Sab complete! Ab tum competition-ready ho.';
+  else hint.textContent=done+' steps done — lage raho, badhiya chal rahe ho!';
+}
+allIds.forEach(id=>{
+  document.getElementById(id).addEventListener('change',e=>{
+    state[id]=e.target.checked;
+    try{localStorage.setItem(KEY,JSON.stringify(state));}catch(_){}
+    paint();
+  });
+});
+document.getElementById('reset').addEventListener('click',()=>{
+  state={};try{localStorage.removeItem(KEY);}catch(_){}paint();
+});
+paint();
+</script>

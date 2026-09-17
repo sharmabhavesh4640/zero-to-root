@@ -1,0 +1,502 @@
+<title>Zero to Root</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@400;600;700;800&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap">
+<style>
+  :root{
+    --bg:#0a0e14; --surface:#111823; --surface-2:#18212e; --raise:#1e2937;
+    --ink:#e7eef6; --ink-soft:#9fb0c0; --ink-faint:#61707f; --line:#212c3a;
+    --accent:#57b6ff; --accent-2:#7cc7ff; --accent-wash:#0f2438;
+    --amber:#e9b45a; --amber-wash:#2a2110;
+    --green:#5fd08a; --green-wash:#0f2c1d;
+    --danger:#f2857a; --danger-wash:#2e1512;
+    --mono:'JetBrains Mono',ui-monospace,Menlo,monospace;
+    --sans:'IBM Plex Sans',system-ui,sans-serif;
+    --display:'Sora','IBM Plex Sans',system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--sans);line-height:1.6;
+    -webkit-font-smoothing:antialiased;}
+  a{color:var(--accent-2);text-decoration:none}
+  code{font-family:var(--mono);font-size:.88em;background:var(--surface-2);border:1px solid var(--line);
+    padding:1px 6px;border-radius:5px;color:var(--accent-2);}
+
+  .shell{display:grid;grid-template-columns:270px minmax(0,1fr);gap:0;max-width:1240px;margin:0 auto;}
+
+  /* ---- Sidebar TOC ---- */
+  aside{border-right:1px solid var(--line);padding:26px 20px;}
+  .toc-wrap{position:sticky;top:22px;}
+  .brand{font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.01em;margin:0 0 3px;}
+  .brand span{color:var(--accent);}
+  .brand-sub{font-family:var(--mono);font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;
+    color:var(--ink-faint);margin:0 0 20px;}
+  nav.toc{display:flex;flex-direction:column;gap:2px;max-height:calc(100vh - 130px);overflow:auto;}
+  nav.toc a{font-size:13px;color:var(--ink-soft);padding:7px 10px;border-radius:8px;
+    border-left:2px solid transparent;transition:.15s;}
+  nav.toc a:hover{background:var(--surface);color:var(--ink);}
+  nav.toc a.part{font-family:var(--display);font-weight:600;color:var(--ink);margin-top:10px;font-size:12px;
+    letter-spacing:.02em;}
+  nav.toc a.active{color:var(--accent-2);border-left-color:var(--accent);background:var(--surface);}
+
+  /* ---- Main ---- */
+  main{padding:30px clamp(20px,4vw,54px) 90px;min-width:0;}
+
+  .eyebrow{font-family:var(--mono);font-size:11.5px;letter-spacing:.24em;text-transform:uppercase;
+    color:var(--accent);display:flex;align-items:center;gap:10px;margin:6px 0 16px;}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--accent);}
+  h1{font-family:var(--display);font-weight:800;letter-spacing:-.025em;font-size:clamp(40px,7vw,68px);
+    line-height:.98;margin:0 0 8px;}
+  h1 span{color:var(--accent);}
+  .tagline{font-size:clamp(16px,2.4vw,20px);color:var(--ink-soft);max-width:60ch;margin:0 0 22px;}
+  .meta{display:flex;flex-wrap:wrap;gap:9px;margin-bottom:22px;}
+  .meta .m{font-family:var(--mono);font-size:12px;color:var(--ink-soft);background:var(--surface);
+    border:1px solid var(--line);border-radius:8px;padding:6px 11px;}
+  .meta .m b{color:var(--accent-2);}
+
+  .progress{background:var(--surface);border:1px solid var(--line);border-radius:13px;padding:15px 18px;
+    margin-bottom:26px;display:flex;flex-direction:column;gap:10px;}
+  .progress .top{display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap;}
+  .progress .top b{font-family:var(--display);font-size:15px;}
+  .progress .count{font-family:var(--mono);font-size:13px;color:var(--ink-faint);}
+  .bar{height:8px;border-radius:99px;background:var(--accent-wash);overflow:hidden;}
+  .bar>i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--accent),var(--accent-2));
+    border-radius:99px;transition:width .4s ease;}
+
+  .panel{border-radius:14px;padding:18px 20px;margin-bottom:16px;border:1px solid var(--line);
+    background:var(--surface);}
+  .panel h3{font-family:var(--display);font-size:15px;margin:0 0 10px;display:flex;gap:9px;align-items:center;}
+  .panel ol,.panel ul{margin:0;padding-left:20px;}
+  .panel li{font-size:14px;color:var(--ink-soft);margin:5px 0;}
+  .panel li b{color:var(--ink);}
+  .panel.ethics{background:var(--danger-wash);border-color:#4a2420;}
+  .panel.note{background:var(--amber-wash);border-color:#4a3a1c;}
+
+  /* ---- Part ---- */
+  .part{margin-top:44px;scroll-margin-top:20px;}
+  .part-head{border-top:2px solid var(--accent);padding-top:16px;margin-bottom:20px;}
+  .part-head .pn{font-family:var(--mono);font-size:12px;letter-spacing:.2em;text-transform:uppercase;
+    color:var(--accent);}
+  .part-head h2{font-family:var(--display);font-weight:800;font-size:clamp(24px,3.6vw,32px);
+    letter-spacing:-.02em;margin:4px 0 4px;}
+  .part-head p{margin:0;color:var(--ink-soft);font-size:14.5px;max-width:65ch;}
+
+  /* ---- Chapter card ---- */
+  .ch{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:18px 20px;
+    margin-bottom:14px;}
+  .ch-top{display:flex;gap:13px;align-items:flex-start;}
+  .ch-check{flex:none;width:22px;height:22px;margin-top:2px;appearance:none;-webkit-appearance:none;
+    border:1.6px solid var(--line);border-radius:7px;background:var(--surface-2);cursor:pointer;position:relative;
+    transition:.15s;}
+  .ch-check:hover{border-color:var(--accent);}
+  .ch-check:checked{background:var(--accent);border-color:var(--accent);}
+  .ch-check:checked::after{content:"";position:absolute;left:6.5px;top:2.5px;width:5px;height:10px;
+    border:solid #06121f;border-width:0 2.5px 2.5px 0;transform:rotate(43deg);}
+  .ch-check:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;}
+  .ch-title{flex:1;min-width:0;}
+  .ch-title .num{font-family:var(--mono);font-size:12px;color:var(--accent);font-weight:500;}
+  .ch-title h4{font-family:var(--display);font-weight:600;font-size:17px;margin:2px 0 4px;letter-spacing:-.01em;}
+  .ch-title .goal{font-size:14px;color:var(--ink-soft);margin:0;}
+  .ch.done .ch-title h4{color:var(--ink-faint);}
+  .ch-body{margin:14px 0 0 35px;display:grid;gap:12px;}
+  @media(max-width:560px){.ch-body{margin-left:0;}}
+  .ch-sec .lbl{font-family:var(--mono);font-size:10.5px;letter-spacing:.15em;text-transform:uppercase;
+    color:var(--ink-faint);margin:0 0 6px;}
+  .learn{margin:0;padding-left:18px;}
+  .learn li{font-size:13.5px;color:var(--ink-soft);margin:3px 0;}
+  .chips{display:flex;flex-wrap:wrap;gap:6px;}
+  .chip{font-family:var(--mono);font-size:11.5px;color:var(--accent-2);background:var(--accent-wash);
+    border:1px solid #1d3a52;border-radius:6px;padding:3px 8px;}
+  .lab{display:flex;gap:10px;background:var(--green-wash);border:1px solid #1c4531;border-radius:10px;
+    padding:10px 13px;font-size:13.5px;color:var(--ink-soft);}
+  .lab b{color:var(--green);}
+  .lab .ic{flex:none;}
+
+  /* ---- full chapter reading area ---- */
+  .ch-readbtn{margin:14px 0 0 35px;font-family:var(--mono);font-size:12.5px;color:var(--accent-2);
+    background:var(--accent-wash);border:1px solid #1d3a52;border-radius:8px;padding:8px 14px;cursor:pointer;
+    display:inline-flex;align-items:center;gap:8px;transition:.15s;}
+  .ch-readbtn:hover{background:#123049;}
+  .ch-readbtn:focus-visible{outline:2px solid var(--accent-2);outline-offset:2px;}
+  @media(max-width:560px){.ch-readbtn,.ch-full{margin-left:0!important;}}
+  .ch-full{margin:16px 0 4px 35px;padding:22px 24px;border-radius:12px;background:var(--surface-2);
+    border:1px solid var(--line);max-width:74ch;}
+  .ch-full h3{font-family:var(--display);font-weight:700;font-size:19px;color:var(--ink);margin:28px 0 10px;
+    letter-spacing:-.01em;}
+  .ch-full h3:first-child{margin-top:0;}
+  .ch-full h4{font-family:var(--display);font-weight:600;font-size:15px;color:var(--accent-2);margin:18px 0 6px;}
+  .ch-full p{font-size:15px;color:var(--ink-soft);margin:0 0 12px;line-height:1.72;}
+  .ch-full p strong,.ch-full li strong{color:var(--ink);}
+  .ch-full em{color:var(--ink);font-style:italic;}
+  .ch-full ul{margin:0 0 12px;padding-left:20px;}
+  .ch-full li{font-size:15px;color:var(--ink-soft);margin:6px 0;line-height:1.65;}
+  .ch-full .box{border-radius:10px;padding:13px 16px;margin:16px 0;font-size:14.5px;}
+  .ch-full .box p{margin:0 0 8px;} .ch-full .box p:last-child{margin-bottom:0;}
+  .ch-full .box .h{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;
+    font-weight:700;margin-bottom:8px;display:block;}
+  .ch-full .box.key{background:var(--accent-wash);border:1px solid #1d3a52;}
+  .ch-full .box.key .h{color:var(--accent-2);}
+  .ch-full .box.warn{background:var(--danger-wash);border:1px solid #4a2420;}
+  .ch-full .box.warn .h{color:var(--danger);}
+  .ch-full .box.story{background:#141b12;border:1px solid #2c3a1e;}
+  .ch-full .box.story .h{color:var(--amber);}
+  .ch-full .box.check{background:var(--green-wash);border:1px solid #1c4531;}
+  .ch-full .box.check .h{color:var(--green);}
+
+  footer{margin-top:50px;padding-top:20px;border-top:1px solid var(--line);font-family:var(--mono);
+    font-size:12px;color:var(--ink-faint);text-align:center;}
+
+  /* mobile */
+  @media(max-width:860px){
+    .shell{grid-template-columns:1fr;}
+    aside{border-right:none;border-bottom:1px solid var(--line);padding:18px;}
+    .toc-wrap{position:static;}
+    nav.toc{max-height:210px;}
+  }
+  @media (prefers-reduced-motion: reduce){*{transition:none!important;scroll-behavior:auto!important;}}
+</style>
+
+<div class="shell">
+  <aside>
+    <div class="toc-wrap">
+      <p class="brand"><span>Zero</span> to Root</p>
+      <p class="brand-sub">Ethical Hacking Handbook</p>
+      <nav class="toc" id="toc"></nav>
+    </div>
+  </aside>
+
+  <main>
+    <p class="eyebrow">Bhavesh's Handbook · v1 — The Map</p>
+    <h1><span>Zero</span> to Root</h1>
+    <p class="tagline">A complete, structured path from absolute beginner to advanced ethical hacker — theory and hands-on together, no gaps, no shortcuts.</p>
+    <div class="meta">
+      <span class="m"><b>6</b> Parts</span>
+      <span class="m"><b>36</b> Chapters</span>
+      <span class="m">Beginner → Advanced</span>
+      <span class="m">Practical + Theory</span>
+    </div>
+
+    <div class="progress">
+      <div class="top"><b>Your progress</b><span class="count"><span id="pc-done">0</span> / 36 chapters · <span id="pc-pct">0%</span></span></div>
+      <div class="bar"><i id="pbar"></i></div>
+    </div>
+
+    <div class="panel">
+      <h3>📖 How to use this book</h3>
+      <ol>
+        <li><b>Follow in order.</b> Each chapter builds on the last. Don't skip — the sequence is the point.</li>
+        <li><b>Understand, don't memorize.</b> Before running any command, say what you think it does. If you can't, you haven't learned it yet.</li>
+        <li><b>Type, don't paste.</b> Type commands yourself. Mistakes are how it sticks.</li>
+        <li><b>Do every lab.</b> 70% hands-on, 30% reading. A chapter isn't done until the lab is done.</li>
+        <li><b>Tick the box</b> on each chapter when you can explain it AND do its lab. Your progress saves automatically.</li>
+      </ol>
+    </div>
+
+    <div class="panel note">
+      <h3>📌 An honest note about this book</h3>
+      <ul>
+        <li>This <b>v1 is the complete map</b> — every part, chapter, topic, tool and lab laid out so you always know where you are and what's next. The link never breaks.</li>
+        <li>The <b>full deep text of each chapter is written in order, one at a time</b>, and added here as you reach it. You're never waiting on the whole book — you get depth exactly when you need it.</li>
+        <li>Topics reflect what's used <b>today</b> (cloud, containers, APIs) and what's <b>emerging</b> (AI/LLM security) — not just old material.</li>
+      </ul>
+    </div>
+
+    <div class="panel ethics">
+      <h3>⚖️ The one rule that matters</h3>
+      <ul>
+        <li>Everything here is for <b>authorized testing only</b> — your own systems, lab machines, CTF platforms, or targets with <b>written permission</b>.</li>
+        <li>Hacking a system you don't own or aren't authorized to test is a <b>crime</b> (in India: IT Act, 2000). No exceptions, no "just testing".</li>
+        <li>The skill and the ethics are one thing. A hacker who ignores this isn't advanced — just a criminal who got caught.</li>
+      </ul>
+    </div>
+
+    <div id="content"></div>
+
+    <footer>Zero to Root · Bhavesh's Ethical Hacking Handbook · v1 (structure) — chapters fill in as you go 🚀</footer>
+  </main>
+</div>
+
+<script>
+const PARTS = [
+ { p:"Part 1", title:"Foundations — The Ground Floor",
+   tag:"Before you attack anything, you master the machine. This is the base every real hacker has and most beginners skip.",
+   chapters:[
+    {n:1,t:"The Hacker Mindset, Ethics & Law",goal:"What hacking actually is, the types of hackers, the law, and how to think like an attacker.",
+     learn:["White/black/grey hat, red vs blue team","The attacker mindset: think in systems and assumptions","Cyber law & scope (IT Act, authorization, disclosure)","Career map: roles, paths, what the job really is"],tools:["—"],lab:"Write your own 'rules of engagement' and set up a legal practice account (TryHackMe/HTB)."},
+    {n:2,t:"How Computers & Operating Systems Work",goal:"The mental models: CPU, memory, processes, files, kernel vs user space.",
+     learn:["Binary, bits/bytes, hex","Memory & processes (why this matters for exploits later)","Kernel vs user space, system calls","How programs actually run"],tools:["—"],lab:"Inspect running processes and memory on your own machine; map what each does."},
+    {n:3,t:"Linux for Hackers",goal:"Deep Linux — the shell, filesystem, permissions, users, and control. Your primary weapon.",
+     learn:["Filesystem tree, paths, navigation","Files, permissions (rwx & numbers), users, sudo/root","Pipes, redirection, filters (grep/sort/find)","Processes, services, package management"],tools:["bash","coreutils","grep","find","apt"],lab:"Complete OverTheWire Bandit levels — every command typed and understood."},
+    {n:4,t:"Networking Fundamentals",goal:"How machines talk: TCP/IP, ports, DNS, HTTP — the map every attack travels on.",
+     learn:["TCP/IP model, packets, the 3-way handshake","Ports & services, what listens where","DNS, HTTP/HTTPS, how a request really works","Subnets, NAT, firewalls"],tools:["Wireshark","tcpdump","dig","curl"],lab:"Capture and read your own traffic in Wireshark; trace one HTTP request end-to-end."},
+    {n:5,t:"Scripting — Bash & Python",goal:"Automate everything. Stop being a tool-user; start being a tool-maker.",
+     learn:["Bash scripting: variables, loops, conditionals","Python basics for security (requests, sockets)","Parsing output & chaining tools","Writing your first real tool"],tools:["bash","python3","pip"],lab:"Build a Python port scanner from scratch, then a Bash recon automation script."},
+   ]},
+ { p:"Part 2", title:"The Methodology — How Real Attacks Flow",
+   tag:"Hacking isn't random button-pushing. It's a repeatable process. Learn the flow professionals follow on every engagement.",
+   chapters:[
+    {n:6,t:"The Penetration Testing Lifecycle",goal:"The professional workflow (PTES): recon → scan → exploit → post-exploit → report.",
+     learn:["The 7 phases of a pentest","Scoping & rules of engagement","Attacker kill chain vs defender view","Note-taking & evidence discipline"],tools:["CherryTree","Obsidian"],lab:"Set up a note-taking system and document a full mock engagement structure."},
+    {n:7,t:"Reconnaissance & OSINT",goal:"Gather everything about a target — often without touching it.",
+     learn:["Passive vs active recon","OSINT: domains, emails, employees, leaks","Subdomain & asset discovery","Google dorking & search operators"],tools:["theHarvester","Amass","Shodan","Google dorks"],lab:"Full passive recon on a domain you own; build a target profile."},
+    {n:8,t:"Scanning & Enumeration",goal:"Find live hosts, open ports, and running services — then dig deep into each.",
+     learn:["Host discovery & port scanning (nmap deep)","Service & version detection","Enumeration of common services (SMB, HTTP, SSH, FTP)","Scan tuning & stealth basics"],tools:["nmap","netcat","enum4linux","gobuster"],lab:"Scan and fully enumerate a vulnerable VM; list every service and version."},
+    {n:9,t:"Vulnerability Analysis",goal:"Turn 'what's running' into 'what's exploitable' using CVEs and scoring.",
+     learn:["What CVEs are; CVSS scoring","Matching version → known vulnerability (the range trap)","Vulnerability scanners & their limits","Prioritizing what to actually attack"],tools:["searchsploit","Nessus/OpenVAS","Exploit-DB","NVD"],lab:"Take your enumeration output and map each service to real CVEs; rank them."},
+   ]},
+ { p:"Part 3", title:"Core Attack Domains",
+   tag:"The bread and butter. These are the skills you'll use on almost every target and in almost every CTF.",
+   chapters:[
+    {n:10,t:"Web Hacking I — OWASP Top 10",goal:"The most important attack surface on earth: web apps and their classic flaws.",
+     learn:["How web apps work (client/server/DB)","Injection: SQLi","XSS, CSRF","Broken auth & access control"],tools:["Burp Suite","OWASP ZAP","sqlmap"],lab:"Own the OWASP Juice Shop / DVWA — exploit each Top 10 category by hand."},
+    {n:11,t:"Web Hacking II — Advanced",goal:"Beyond the basics: the flaws that win bug bounties and break modern apps.",
+     learn:["SSRF & its impact","Insecure deserialization","XXE, SSTI, file upload attacks","Business-logic flaws"],tools:["Burp Suite Pro","custom scripts"],lab:"Chain multiple bugs on a deliberately-vulnerable app to full compromise."},
+    {n:12,t:"Exploitation & Metasploit",goal:"Take a known vulnerability and turn it into access.",
+     learn:["Exploits, payloads, shells (bind vs reverse)","Metasploit framework end-to-end","Manual exploitation vs frameworks","Handling & upgrading shells"],tools:["Metasploit","msfvenom","netcat"],lab:"Exploit a vulnerable service to get a shell — first with Metasploit, then manually."},
+    {n:13,t:"Password Attacks & Cracking",goal:"How passwords and hashes fall — and why strong ones don't.",
+     learn:["Hashing vs encryption","Online (brute/spray) vs offline cracking","Wordlists, rules, GPU cracking","Credential reuse & stuffing"],tools:["Hashcat","John the Ripper","Hydra"],lab:"Crack a set of your own sample hashes; measure weak vs strong."},
+    {n:14,t:"Privilege Escalation — Linux & Windows",goal:"You're in as a limited user. Now become root/admin. The heart of real attacks.",
+     learn:["Linux privesc: SUID, sudo, cron, capabilities","Windows privesc: services, tokens, misconfigs","Kernel exploits & enumeration scripts","Automating the hunt"],tools:["LinPEAS","WinPEAS","GTFOBins"],lab:"Root two lab machines (one Linux, one Windows) via different privesc paths."},
+    {n:15,t:"Post-Exploitation, Pivoting & Persistence",goal:"What a real attacker does after the first shell: dig deeper, move sideways, stay in.",
+     learn:["Loot & credential harvesting","Pivoting into internal networks","Persistence techniques","Covering the basics of stealth (authorized only)"],tools:["Meterpreter","chisel","proxychains"],lab:"From one compromised host, pivot to and compromise a second internal machine."},
+    {n:16,t:"Network Attacks",goal:"Attack the network itself: intercept, spoof, and manipulate traffic.",
+     learn:["Sniffing & MITM","ARP/DNS spoofing","Relay & downgrade attacks","Network-level defenses"],tools:["Wireshark","Ettercap","bettercap","Responder"],lab:"Run a MITM in your own isolated lab and capture test credentials."},
+    {n:17,t:"Wireless (Wi-Fi) Hacking",goal:"Test the security of wireless networks (your own).",
+     learn:["Wi-Fi standards & WPA2/WPA3","Capturing handshakes","Cracking & why strong passphrases win","Rogue APs & evil twins (concept)"],tools:["Aircrack-ng","hcxdumptool","Hashcat"],lab:"Capture and attempt to crack a handshake on your OWN router; then harden it."},
+    {n:18,t:"Social Engineering & Phishing",goal:"The human is the biggest vulnerability. Understand it to defend and (authorized) test it.",
+     learn:["Psychology of manipulation","Phishing & pretexting","Payload delivery basics","Awareness & defense"],tools:["GoPhish","SET"],lab:"Build a phishing awareness simulation for a consenting test group; measure & educate."},
+   ]},
+ { p:"Part 4", title:"Advanced & Deep Specializations",
+   tag:"Where hackers become experts. These are hard, high-value, and separate the pros from the crowd.",
+   chapters:[
+    {n:19,t:"Active Directory & Windows Enterprise",goal:"How real companies get owned: attacking Windows domains end-to-end.",
+     learn:["AD structure, Kerberos, NTLM","Kerberoasting, AS-REP roasting","Lateral movement & DCSync","Domain domination paths"],tools:["BloodHound","Impacket","Rubeus","CrackMapExec"],lab:"Compromise a full AD lab (e.g. GOAD) from foothold to Domain Admin."},
+    {n:20,t:"Reverse Engineering & Binary Exploitation",goal:"The hardest craft: read programs at machine level and exploit their memory.",
+     learn:["Assembly & memory layout","Buffer overflows (stack)","ROP, format strings, heap basics","Modern mitigations (ASLR, NX, canaries)"],tools:["Ghidra","GDB/pwndbg","pwntools","radare2"],lab:"Write your own exploit for a vulnerable binary to pop a shell (pwn.college / ROP Emporium)."},
+    {n:21,t:"Applied Cryptography & Attacks",goal:"Understand crypto well enough to break the broken and use the strong.",
+     learn:["Symmetric/asymmetric, hashing","Encoding ≠ encryption","Common crypto attacks (padding oracle, weak RNG)","TLS & PKI"],tools:["CyberChef","openssl","Python cryptography"],lab:"Solve a set of CTF crypto challenges; break an intentionally weak scheme."},
+    {n:22,t:"Malware Analysis Fundamentals",goal:"Understand malicious code — to analyze, detect, and defend against it.",
+     learn:["Static vs dynamic analysis","Sandboxing safely","Common malware behaviors","Indicators of compromise"],tools:["REMnux","Cuckoo","Ghidra"],lab:"Analyze a benign sample in an isolated VM; document its behavior & IOCs."},
+    {n:23,t:"Detection Evasion (Red Team)",goal:"For authorized red-teaming: understand how AV/EDR works and how attackers slip past.",
+     learn:["How AV/EDR detects","Obfuscation & payload concepts","Living-off-the-land techniques","Why detection engineering matters"],tools:["(red-team, authorized labs only)"],lab:"In a private lab, measure how a defense detects vs misses a test payload; write detections."},
+   ]},
+ { p:"Part 5", title:"Modern & Emerging Frontiers",
+   tag:"The world moved to cloud, containers, APIs and AI. This is where the jobs and the future are — most old material ignores it.",
+   chapters:[
+    {n:24,t:"Cloud Security & Hacking",goal:"Attack and secure AWS/Azure/GCP — where most infrastructure now lives.",
+     learn:["Cloud IAM & the shared-responsibility model","Common misconfigurations (S3, roles, keys)","Metadata service & privilege escalation","Cloud enumeration"],tools:["ScoutSuite","Pacu","aws-cli","Prowler"],lab:"Attack a deliberately-vulnerable cloud lab (CloudGoat / flaws.cloud)."},
+    {n:25,t:"Containers, Docker & Kubernetes",goal:"Break out of and secure the containers running modern apps.",
+     learn:["Container fundamentals","Container escapes & misconfigs","Kubernetes attack surface","Supply-chain basics"],tools:["Docker","kubectl","kube-hunter","Trivy"],lab:"Escape a misconfigured container; enumerate a test K8s cluster."},
+    {n:26,t:"Modern Web & API Security",goal:"Today's apps are APIs. Learn the flaws that break them.",
+     learn:["REST & GraphQL attack surface","JWT attacks","OAuth/OIDC flaws","API-specific OWASP Top 10"],tools:["Burp Suite","Postman","jwt_tool"],lab:"Test a vulnerable API: break auth, abuse JWT, exploit an IDOR."},
+    {n:27,t:"Mobile Hacking (Android & iOS)",goal:"Test the security of mobile apps.",
+     learn:["Mobile app structure","Static & dynamic analysis","Intercepting mobile traffic","Insecure storage & IPC"],tools:["MobSF","Frida","apktool","Burp"],lab:"Analyze an intentionally-vulnerable Android app (e.g. InsecureBankv2)."},
+    {n:28,t:"IoT & Hardware Hacking",goal:"Attack the physical/embedded world: devices, firmware, protocols.",
+     learn:["Firmware extraction & analysis","Hardware interfaces (UART/JTAG)","Radio & protocol basics","Common IoT flaws"],tools:["binwalk","Firmadyne","logic analyzer"],lab:"Extract and analyze a firmware image; find hardcoded secrets."},
+    {n:29,t:"AI / LLM Security",goal:"The newest frontier: attacking and securing AI systems.",
+     learn:["Prompt injection & jailbreaks","Data poisoning & model theft","Insecure AI integrations (agents, plugins)","OWASP Top 10 for LLMs"],tools:["custom prompts","Garak"],lab:"Run prompt-injection tests against a sandboxed LLM app; document defenses."},
+    {n:30,t:"DevSecOps & CI/CD Attacks",goal:"Attack the pipeline that builds and ships software.",
+     learn:["CI/CD attack surface","Secrets in repos & pipelines","Dependency & supply-chain attacks","Shifting security left"],tools:["git-secrets","trufflehog","Trivy"],lab:"Find leaked secrets in a test repo; poison a mock build pipeline safely."},
+   ]},
+ { p:"Part 6", title:"From Learner to Professional",
+   tag:"Skills alone don't make a career. This is how you practice, prove yourself, get paid, and never stop growing.",
+   chapters:[
+    {n:31,t:"Building Your Home Lab",goal:"A safe playground where you can break anything without consequences.",
+     learn:["VMs & isolated networks","Vulnerable machines to practice on","Snapshots & safe resets","Windows AD lab setup"],tools:["VirtualBox","VMware","Kali","GOAD"],lab:"Build a multi-VM isolated lab: Kali attacker + a vulnerable target."},
+    {n:32,t:"CTFs & Wargames",goal:"The fastest way to build real skill — legal, gamified, endless.",
+     learn:["CTF formats (Jeopardy, Attack-Defense)","Working through machines methodically","Reading & writing writeups","Team play"],tools:["OverTheWire","HackTheBox","TryHackMe","CTFtime"],lab:"Finish Bandit, then own 5 HTB/THM boxes and write up each."},
+    {n:33,t:"Bug Bounty Hunting",goal:"Get paid — legally — to hack real companies.",
+     learn:["Platforms & how bounties work","Choosing & recon-ing targets","Writing reports that pay","Responsible disclosure"],tools:["HackerOne","Bugcrowd","Burp","recon stack"],lab:"Pick a real program, recon in-scope only, and submit one quality (even low-severity) report."},
+    {n:34,t:"Report Writing & Communication",goal:"A finding no one understands is worthless. Learn to communicate impact.",
+     learn:["Anatomy of a pentest report","Writing for technical & non-technical readers","Risk, impact & remediation","Demonstrating proof"],tools:["templates","Markdown"],lab:"Write a full professional report for one machine you've owned."},
+    {n:35,t:"Certifications & Career Roadmap",goal:"Turn skill into a job: which certs matter, and the path to hire.",
+     learn:["eJPT → PNPT/OSCP → beyond","Building a portfolio & resume","Interviews & practical exams","Specializing vs generalizing"],tools:["—"],lab:"Make a 12-month plan: target cert, portfolio pieces, and application timeline."},
+    {n:36,t:"Staying Sharp",goal:"Security changes weekly. Learn how to never fall behind.",
+     learn:["Following research & disclosures","Building a learning routine","Community, mentors & giving back","Ethics as a lifelong practice"],tools:["RSS","Twitter/X","Discord","blogs"],lab:"Set up a daily 20-minute learning habit and a source feed you actually read."},
+   ]},
+];
+
+// Full written chapters (keyed by chapter number). Grows over time.
+const CHAPTERS_FULL = {
+ 1: `
+   <h3>1.1 — What hacking actually is</h3>
+   <p>Forget the movies. Hacking is not a hooded figure smashing a keyboard while green text rains down a screen. At its core, hacking is one thing:</p>
+   <div class="box key"><span class="h">💡 Key idea</span><p><strong>Hacking is understanding a system so deeply that you can make it do something it was never designed to do.</strong></p></div>
+   <p>That is it. A "system" can be a web app, a network, a Wi-Fi router, a person, or a computer chip. The hacker's edge is never the tool — it is <strong>understanding</strong>. A tool in the hands of someone who does not understand the system is useless. The same tool in the hands of someone who understands it deeply becomes a key.</p>
+   <p>This is exactly why we spent so long on Linux, permissions, and how commands work before touching any "cool" attack. That was not a detour — it was the foundation. Every exploit you will ever run is just you using a system's own rules against it, and you cannot bend rules you do not understand.</p>
+
+   <h3>1.2 — The hacker mindset (the most important thing in this book)</h3>
+   <p>Tools change every year. The mindset is forever. If you remember one thing from this chapter, remember this section.</p>
+   <h4>Think in systems</h4>
+   <p>Every system is built on <strong>assumptions</strong>. The designer assumed people would use it a certain way. The hacker's core question is always the same:</p>
+   <div class="box key"><span class="h">💡 The one question</span><p><strong>"What did the designer assume — and what happens if that assumption is false?"</strong></p></div>
+   <p>Look at problems you have already solved:</p>
+   <ul>
+     <li>A login box <strong>assumes</strong> you type a normal username. What if you type database code instead? (That is SQL injection.)</li>
+     <li>The <code>cat</code> command in Bandit <strong>assumed</strong> a normal filename. A file literally named <code>-</code> broke that assumption, so you used <code>./-</code>.</li>
+     <li>A program <strong>assumed</strong> whoever runs it is a normal user. The <code>setuid</code> bit broke that, so it ran as its owner and you became bandit20.</li>
+   </ul>
+   <p>See the pattern? Every one is "the system assumed X; I made X false." That is the entire game.</p>
+   <h4>Adversarial thinking</h4>
+   <p>Defenders build for the <strong>expected</strong> path, where everyone behaves. Attackers live in the <strong>unexpected</strong> paths — the edges, the "what if I do this weird thing?" A normal user asks "does it work?" A hacker asks "how can I make it break?"</p>
+   <h4>Persistence beats talent</h4>
+   <p>Here is the honest truth: real hacking is mostly <strong>failing</strong>. You will try ten things and nine will fail. The hacker is not the person who never fails — it is the person who tries the eleventh thing. You already felt this in Bandit: some levels took many tries. That frustration <em>is</em> the job. Get comfortable with it now.</p>
+   <div class="box story"><span class="h">📖 A tiny example</span><p>A tester is told "you cannot access other users' invoices." Everyone accepts it. The hacker opens their own invoice and notices the URL says <code>invoice?id=1043</code>. They change it to <code>1042</code>. Someone else's invoice loads. No tool, no exploit — just one question: "what did they assume I would not do?" This exact flaw (called IDOR) has leaked millions of records from real companies.</p></div>
+
+   <h3>1.3 — The types of hackers</h3>
+   <p>Hackers are grouped by <strong>intent</strong> — what is in their heart, not what they can do. The skills are often identical; the difference is permission and purpose.</p>
+   <ul>
+     <li><strong>White hat</strong> — ethical. Hacks <em>with</em> permission to make systems safer. This is you.</li>
+     <li><strong>Black hat</strong> — criminal. Hacks illegally for theft, damage, or money.</li>
+     <li><strong>Grey hat</strong> — hacks without permission but usually without malice (finds a bug, reports it). Still illegal, even with good intentions.</li>
+   </ul>
+   <p>In the industry you will also hear about <strong>teams</strong>:</p>
+   <ul>
+     <li>🔴 <strong>Red team</strong> — the attackers, who simulate real adversaries.</li>
+     <li>🔵 <strong>Blue team</strong> — the defenders, who detect and stop attacks.</li>
+     <li>🟣 <strong>Purple team</strong> — both working together so the whole organization gets stronger.</li>
+   </ul>
+   <div class="box key"><span class="h">💡 Key idea</span><p>The best attackers understand defense, and the best defenders think like attackers. Do not treat them as opposites — they are two views of the same system.</p></div>
+
+   <h3>1.4 — The law: the line you never cross</h3>
+   <p>This is not a boring formality. It is the single most important rule in your entire career, so read it twice.</p>
+   <div class="box warn"><span class="h">⚠️ The only thing that makes you legal</span><p><strong>Authorization.</strong> The exact same action — scanning a server, cracking a password — is a professional service if you have permission, and a serious crime if you do not. Skill is not the line. <strong>Permission is the line.</strong></p></div>
+   <h4>Scope is everything</h4>
+   <p>When you are authorized, you are authorized for <strong>exactly</strong> what is written down: these addresses, these apps, these methods. Touch one thing outside that "scope" and you are a criminal again, even in the middle of a real job. Professionals get authorization in <strong>writing</strong>, every time. A friend saying "yeah, go ahead" is not real authorization and will not protect you in court.</p>
+   <h4>The law where you are</h4>
+   <ul>
+     <li><strong>India — IT Act, 2000</strong> (especially Sections 43 and 66): unauthorized access, damage, or data theft can mean heavy fines and jail.</li>
+     <li>Almost every country has an equivalent (for example the CFAA in the USA). Unauthorized access is a crime nearly everywhere.</li>
+   </ul>
+   <div class="box warn"><span class="h">⚠️ These are NOT defenses</span><p>"I was just testing." "I did not cause any harm." "I did not even use the data." None of these are legal defenses. The unauthorized access itself is the crime. Careers and freedom have ended over a single "harmless" test.</p></div>
+   <h4>Where it is always safe to practice</h4>
+   <ul>
+     <li>Your <strong>own</strong> machines and lab (VMs you control).</li>
+     <li><strong>CTF platforms and wargames</strong> — OverTheWire, HackTheBox, TryHackMe (they are built for exactly this).</li>
+     <li><strong>Bug bounty programs</strong> — companies give you written permission, inside a defined scope.</li>
+   </ul>
+
+   <h3>1.5 — Ethics is part of the skill, not separate from it</h3>
+   <p>A professional hacker is handed the keys to a company's most sensitive systems. That only happens because they are <strong>trusted</strong>. Trust is the real currency of this field — worth more than any certificate. One betrayal and it is gone forever, and your career with it.</p>
+   <p>So ethics is not a lecture bolted onto the skill. It <em>is</em> the skill. A brilliant hacker who cannot be trusted is not "advanced" — they are a liability waiting to be arrested.</p>
+
+   <h3>1.6 — The career map (where this leads)</h3>
+   <p>This is a real, in-demand, well-paid career, not just a hobby. Some of the roles this book prepares you for:</p>
+   <ul>
+     <li><strong>Penetration Tester</strong> — hired to break into systems (with permission) and report how.</li>
+     <li><strong>Red Teamer</strong> — simulates real, advanced adversaries against an organization.</li>
+     <li><strong>Bug Bounty Hunter</strong> — freelance; paid per valid bug found in real companies.</li>
+     <li><strong>Security Analyst / Blue Team</strong> — defends, monitors, and responds to attacks.</li>
+     <li><strong>Application / Cloud Security Engineer</strong> — builds security into software and infrastructure.</li>
+     <li><strong>Security Researcher</strong> — finds brand-new, unknown vulnerabilities (0-days).</li>
+   </ul>
+   <p>You do not have to pick now. Build the foundation first; the right door becomes obvious later.</p>
+
+   <h3>1.7 — Train the mindset (do this daily)</h3>
+   <p>The mindset is a muscle. Build it with a simple habit: for any system you use — an app, a website, an ATM — quietly ask yourself <strong>"what is this assuming about me, and what would happen if I broke that assumption?"</strong> You do not act on it (that would be illegal) — you just <em>notice</em>. Do this daily and within weeks you will start seeing the world the way an attacker does.</p>
+
+   <div class="box check"><span class="h">✅ Check yourself</span><p>Before you tick this chapter done, make sure you can answer these in your own words:</p><p>1. In one sentence, what is hacking really about?<br>2. What is the single question that defines the hacker mindset?<br>3. What is the ONE thing that separates a legal pentester from a criminal?<br>4. Why is trust worth more than any certificate in this field?</p></div>
+
+   <h3>🧪 Lab for Chapter 1</h3>
+   <p><strong>1.</strong> Write your own one-paragraph "rules of engagement" — a personal promise about what you will and will not do. Keep it somewhere you will see it.</p>
+   <p><strong>2.</strong> Create a free account on <strong>TryHackMe</strong> or <strong>HackTheBox</strong> — your legal playground for the rest of this book.</p>
+   <p><strong>3.</strong> Mindset drill: pick one app you used today and write down three assumptions it makes about its users.</p>
+   <p>Done all three, and can answer the "Check yourself" questions? Tick the box on this chapter and move on to Chapter 2. 🚀</p>
+ `,
+};
+
+const content = document.getElementById('content');
+const toc = document.getElementById('toc');
+let allChapters = [];
+
+PARTS.forEach((part, pi)=>{
+  const pid = 'part'+(pi+1);
+  // TOC part link
+  const pa = document.createElement('a');
+  pa.href = '#'+pid; pa.className='part'; pa.textContent = part.p+': '+part.title;
+  toc.appendChild(pa);
+
+  const sec = document.createElement('section');
+  sec.className='part'; sec.id=pid;
+  sec.innerHTML = `<div class="part-head"><div class="pn">${part.p}</div><h2>${part.title}</h2><p>${part.tag}</p></div>`;
+
+  part.chapters.forEach(ch=>{
+    allChapters.push(ch.n);
+    const cid = 'ch'+ch.n;
+    // TOC chapter link
+    const ca = document.createElement('a');
+    ca.href='#'+cid; ca.textContent = ch.n+'. '+ch.t;
+    toc.appendChild(ca);
+
+    const card = document.createElement('div');
+    card.className='ch'; card.id=cid;
+    card.innerHTML = `
+      <div class="ch-top">
+        <input type="checkbox" class="ch-check" id="chk${ch.n}" aria-label="Mark chapter ${ch.n} done">
+        <div class="ch-title">
+          <div class="num">CHAPTER ${ch.n}</div>
+          <h4>${ch.t}</h4>
+          <p class="goal">${ch.goal}</p>
+        </div>
+      </div>
+      <div class="ch-body">
+        <div class="ch-sec"><p class="lbl">You'll learn</p><ul class="learn">${ch.learn.map(x=>`<li>${x}</li>`).join('')}</ul></div>
+        <div class="ch-sec"><p class="lbl">Tools</p><div class="chips">${ch.tools.map(x=>`<span class="chip">${x}</span>`).join('')}</div></div>
+        <div class="lab"><span class="ic">🧪</span><span><b>Lab:</b> ${ch.lab}</span></div>
+      </div>
+      ${CHAPTERS_FULL[ch.n] ? `<button class="ch-readbtn" data-ch="${ch.n}">📖 Read full chapter</button><div class="ch-full" id="full${ch.n}" hidden>${CHAPTERS_FULL[ch.n]}</div>` : ''}`;
+    sec.appendChild(card);
+  });
+  content.appendChild(sec);
+});
+
+// ---- read full chapter toggle ----
+document.querySelectorAll('.ch-readbtn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    const f=document.getElementById('full'+btn.dataset.ch);
+    f.hidden=!f.hidden;
+    btn.textContent = f.hidden ? '📖 Read full chapter' : '📕 Hide chapter';
+  });
+});
+
+// ---- progress (localStorage) ----
+const KEY='zerotoroot.progress.v1';
+let state={};
+try{state=JSON.parse(localStorage.getItem(KEY))||{};}catch(e){state={};}
+function paint(){
+  let done=0;
+  allChapters.forEach(n=>{
+    const box=document.getElementById('chk'+n), card=document.getElementById('ch'+n);
+    if(state[n]){box.checked=true;card.classList.add('done');done++;}
+    else{box.checked=false;card.classList.remove('done');}
+  });
+  const pct=Math.round(done/allChapters.length*100);
+  document.getElementById('pc-done').textContent=done;
+  document.getElementById('pc-pct').textContent=pct+'%';
+  document.getElementById('pbar').style.width=pct+'%';
+}
+allChapters.forEach(n=>{
+  document.getElementById('chk'+n).addEventListener('change',e=>{
+    state[n]=e.target.checked;
+    try{localStorage.setItem(KEY,JSON.stringify(state));}catch(_){}
+    paint();
+  });
+});
+paint();
+
+// ---- scroll-spy (highlight active part in TOC) ----
+try{
+  const partEls=[...document.querySelectorAll('section.part')];
+  const partLinks=[...toc.querySelectorAll('a.part')];
+  const io=new IntersectionObserver((entries)=>{
+    entries.forEach(en=>{
+      if(en.isIntersecting){
+        const i=partEls.indexOf(en.target);
+        partLinks.forEach(l=>l.classList.remove('active'));
+        if(partLinks[i])partLinks[i].classList.add('active');
+      }
+    });
+  },{rootMargin:'-20% 0px -70% 0px'});
+  partEls.forEach(el=>io.observe(el));
+}catch(e){}
+</script>
